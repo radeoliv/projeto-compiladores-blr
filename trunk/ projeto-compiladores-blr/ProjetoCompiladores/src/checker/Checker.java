@@ -1,5 +1,6 @@
 package checker;
 
+import util.AST.AST;
 import util.symbolsTable.IdentificationTable;
 import classes.command.AssignmentCommand;
 import classes.command.BreakCommand;
@@ -24,9 +25,7 @@ public class Checker implements Visitor{
 		identificationTable = new IdentificationTable();
 	}
 	
-	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand,
-			Object obj) {
-		// TODO Auto-generated method stub
+	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand,Object obj) {
 		return null;
 	}
 
@@ -43,18 +42,33 @@ public class Checker implements Visitor{
 
 	public Object visitFunctionCallCommand(
 			FunctionCallCommand functionCallCommand, Object obj) {
-		// TODO Auto-generated method stub
+		// Argumentos com o msm tipo dos parametros
 		return null;
 	}
 
-	public Object visitFunctionDeclaration(
-			FunctionDeclaration functionDeclaration, Object obj) {
-		// TODO Auto-generated method stub
+	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException {
+		Identifier fdId = functionDeclaration.getIdentifier();
+		
+		AST a = identificationTable.retrieve(fdId.getSpelling());
+		if (a== null){
+			identificationTable.enter(fdId.getSpelling(), functionDeclaration);
+			fdId.visit(this, obj);
+			identificationTable.openScope();
+			// Corpo?
+			identificationTable.closeScope();
+		}else{
+			throw new SemanticException ("Função já declarada");
+		}
 		return null;
 	}
 
-	public Object visitIdentifier(Identifier identifier, Object obj) {
-		// TODO Auto-generated method stub
+	public Object visitIdentifier(Identifier identifier, Object obj) throws SemanticException {
+		AST a = identificationTable.retrieve(identifier.getSpelling());
+		if (a!=null){
+			 identifier.setDeclaration(a);
+		}else{
+			throw new SemanticException ("Identificador não declarado");
+		}
 		return null;
 	}
 

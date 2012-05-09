@@ -8,8 +8,8 @@ import classes.terminal.Identifier;
 
 public class FunctionDeclaration extends AST {
 
-	Identifier identifier;
-	ArrayList<Identifier> parameters;
+	private Identifier identifier;
+	private ArrayList<Identifier> parameters;
 	ArrayList<Command> commands;
 	
 	public FunctionDeclaration(Identifier identifier, ArrayList<Identifier> parameters, ArrayList<Command> commands){
@@ -28,6 +28,23 @@ public class FunctionDeclaration extends AST {
 	public Object visit(Visitor visitor, Object obj) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	// GET SET
+	public Identifier getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(Identifier identifier) {
+		this.identifier = identifier;
+	}
+	
+	public ArrayList<Identifier> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(ArrayList<Identifier> parameters) {
+		this.parameters = parameters;
 	}
 
 }

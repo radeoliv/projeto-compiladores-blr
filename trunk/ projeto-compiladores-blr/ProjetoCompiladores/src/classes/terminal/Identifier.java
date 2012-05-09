@@ -6,8 +6,9 @@ import util.AST.AST;
 
 public class Identifier extends Terminal {
 
-	String spelling;
-	AST declaration;
+	private String spelling;
+	private AST declaration;
+	
 	
 	public Identifier(Token token){
 		super.token = token;
@@ -24,6 +25,24 @@ public class Identifier extends Terminal {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	// GET SET
+	public String getSpelling() {
+		return spelling;
+	}
+
+	public void setSpelling(String spelling) {
+		this.spelling = spelling;
+	}
+
+	public AST getDeclaration() {
+		return declaration;
+	}
+
+	public void setDeclaration(AST declaration) {
+		this.declaration = declaration;
+	}
+
 	
 
 }

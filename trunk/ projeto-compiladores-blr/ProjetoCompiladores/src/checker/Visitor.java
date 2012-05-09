@@ -32,13 +32,13 @@ public interface Visitor {
 	public Object visitUnaryExpressionNumber (UnaryExpressionNumber unaryExpressionNumber, Object obj);
 	
 	// Function Declaration
-	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj);
+	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException;
 	
 	// Program
 	public Object visitProgram(Program program, Object obj);
 	
 	// Terminal
-	public Object visitIdentifier(Identifier identifier, Object obj);
+	public Object visitIdentifier(Identifier identifier, Object obj) throws SemanticException;
 	public Object visitNumber(Number number, Object obj);
 	public Object visitOperator(Operator operator, Object obj);
 }
