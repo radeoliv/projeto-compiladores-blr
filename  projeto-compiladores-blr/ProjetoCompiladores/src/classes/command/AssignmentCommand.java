@@ -6,13 +6,9 @@ import classes.terminal.Identifier;
 
 public class AssignmentCommand extends Command {
 	
-	Identifier id;
-	Expression e;
+	private Identifier id;
+	private Expression e;
 	
-	public AssignmentCommand(Identifier id, Expression e){
-		this.id = id;
-		this.e = e;
-	}
 	
 	@Override
 	public String toString(int level) {
@@ -25,5 +21,26 @@ public class AssignmentCommand extends Command {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	// GET SET
+	public Identifier getId() {
+		return id;
+	}
 
+	public void setId(Identifier id) {
+		this.id = id;
+	}
+
+	public Expression getE() {
+		return e;
+	}
+
+	public void setE(Expression e) {
+		this.e = e;
+	}
+
+	public AssignmentCommand(Identifier id, Expression e){
+		this.id = id;
+		this.e = e;
+	}
 }
