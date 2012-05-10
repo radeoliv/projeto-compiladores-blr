@@ -170,6 +170,8 @@ public class Checker implements Visitor{
 
 	public Object visitReturnCommand(ReturnCommand returnCommand, Object obj) {
 		// TODO Auto-generated method stub
+		
+		//return sempre vai ser último comando da função
 		return null;
 	}
 
