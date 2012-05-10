@@ -6,6 +6,7 @@ import classes.expression.*;
 import classes.functionDeclaration.FunctionDeclaration;
 import classes.procedureCall.ProcedureCall;
 import classes.program.Program;
+import classes.root.Root;
 import classes.terminal.*;
 import classes.terminal.Number;
 import scanner.*;
@@ -65,28 +66,35 @@ public class Parser {
 	 * @throws SyntacticException
 	 * @throws LexicalException 
 	 */
+	
+	// 1ª MUDANÇA
 	public AST parse() throws SyntacticException, LexicalException {
-		Program programAST = parseProgram();
+		Root rootAST = parseRoot();
 		accept (GrammarSymbols.EOT);
-		return programAST;
+		return rootAST;
 	}
 	
-	private Program parseProgram () throws LexicalException, SyntacticException{		
-		// 1ª MUDANÇA
-		// program ::= command* functionDeclaration*
-		
-		ArrayList <FunctionDeclaration> functions = new ArrayList <FunctionDeclaration>();
-		ArrayList <Command> commands = new ArrayList <Command>();
+	private Root parseRoot() throws LexicalException, SyntacticException{
+		// root ::= (program)*
+		ArrayList <Program> programs = new ArrayList <Program>();
 		
 		while (currentToken.getKind() != GrammarSymbols.EOT){
-			if (currentToken.getKind() == GrammarSymbols.FUNCTION){
-				functions.add(parseFunctionDeclaration());
-			}else{
-				commands.add(parseCommand());
-			}
+			programs.add(parseProgram());
 		}
-		Program programAST = new Program (commands, functions);
-		return programAST;
+		return null;
+	}
+	private Program parseProgram () throws LexicalException, SyntacticException{		
+		
+		// program ::= (command | functionDeclaration)*	
+		Program program = null;
+		
+		if (currentToken.getKind() == GrammarSymbols.FUNCTION){
+			program = new Program (parseFunctionDeclaration());
+		}else{
+			program = new Program (parseCommand());
+		}
+		
+		return program;
 	}
 	
 	private Command parseCommand () throws LexicalException, SyntacticException{

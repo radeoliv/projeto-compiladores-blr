@@ -5,6 +5,7 @@ import util.AST.AST;
 import util.symbolsTable.IdentificationTable;
 import classes.command.*;
 import classes.expression.*;
+import classes.root.Root;
 import classes.terminal.*;
 import classes.terminal.Number;
 import classes.procedureCall.ProcedureCall;
@@ -197,14 +198,22 @@ public class Checker implements Visitor{
 		return null;
 	}
 	
-	//OK!
+	
 	public Object visitProgram(Program program, Object obj) throws SemanticException {
-		for(FunctionDeclaration fd : program.getFunctions()){
+		// :TODO
+		/*for(FunctionDeclaration fd : program.getFunctions()){
 			fd.visit(this, obj);
 		}
 		for(Command cmd : program.getCommands()){
 			cmd.visit(this, obj);
-		}
+		}*/
 		return null;
 	}
+	
+	public Object visitRoot(Root root, Object obj) throws SemanticException {
+		// :TODO
+		return null;
+	}
+	
+	
 }
