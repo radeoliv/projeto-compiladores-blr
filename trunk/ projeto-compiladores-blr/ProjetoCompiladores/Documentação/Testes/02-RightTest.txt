@@ -1,0 +1,46 @@
+#-----------------------------------------------------------
+# Teste 02
+# Right
+#-----------------------------------------------------------
+
+	a   =    2 #Teste de tabulacao, espaco e atribuicao
+
+# Testes de atribuicaoo com diversas formas de expressao
+b = a+1
+c = a+b
+d = (3*a)
+e = d/a
+f = e
+g = 1.5
+
+
+# Teste de funcao sem parametro e sem retorno
+function mais_um () print (e+1) end
+
+# Teste de funcao com parametros e com retorno
+# Teste de: while, if, else, break e retun dentro da funcao
+function soma (a, b)
+	while (b>0) do
+		if (b==1) then
+			soma = (a+b)
+			break
+		else soma = b
+		end		
+		b=b-1
+	end
+	return soma;
+end
+
+# Teste de: while, if, else, break e return
+while (a>0) do
+	if (a~=1) then
+		print (a)
+	else print (1000) print (g+a)
+	end
+	a=a-1
+end
+
+# Teste de chamada de funcao
+mais_um ()
+soma (a,b)
+

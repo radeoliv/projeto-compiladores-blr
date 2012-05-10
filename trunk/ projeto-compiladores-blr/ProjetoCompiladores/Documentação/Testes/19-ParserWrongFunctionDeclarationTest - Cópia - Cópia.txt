@@ -1,0 +1,8 @@
+#-----------------------------------------------------------
+# Parser - Teste 19
+# WrongFunctionDeclaration
+#-----------------------------------------------------------
+
+# declaracao de funcao sem end
+
+function nome(a,b,c) print (a)
