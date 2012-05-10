@@ -42,7 +42,7 @@ function soma (a, b)
 		end		
 		b=b-1
 	end
-	return soma;
+	return soma
 end
 
 # Chamada de funcaoo sem parametro e com retorno

@@ -1,0 +1,30 @@
+Classe IdentificationTable
+- this.table.put(new Key(0, "call"), null);
+
+- } else if (string.equals("call")){
+	value = GrammarSymbols.CALL;
+	}
+
+Classe GrammarSymbols
+- Add public static final int CALL = 995;
+- Mudei os números à frente (996,997...)
+
+Classe FunctionDeclaration
+- acrescentar return
+
+Classe Parser
+- Sinalizadas por comentários
+
+Classes Root e Program
+
+Classe BaseExpression
+-  arguments
+
+*Criação do pacote classes.procedureCall e classes.root e inserção da classe lá
+
+*Mudei o teste 02
+*Gramática
+
+
+?
+- Na BaseExpression... o id(arguments), ou seja, chamada de função, será unaryexpression?
