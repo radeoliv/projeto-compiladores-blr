@@ -5,6 +5,8 @@ import scanner.Token;
 
 public class Number extends Terminal {
 	
+	public int larissa;
+	
 	public Number(Token token){
 		super.token = token;
 	}
@@ -17,8 +19,7 @@ public class Number extends Terminal {
 
 	@Override
 	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visitNumber(this, obj);
 	}
 	
 	public int getKind(){

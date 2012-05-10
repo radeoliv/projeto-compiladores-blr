@@ -3,20 +3,14 @@ package checker;
 import parser.GrammarSymbols;
 import util.AST.AST;
 import util.symbolsTable.IdentificationTable;
-import classes.command.AssignmentCommand;
-import classes.command.BreakCommand;
-import classes.command.Command;
-import classes.command.FunctionCallCommand;
-import classes.command.IfCommand;
-import classes.command.PrintCommand;
-import classes.command.ReturnCommand;
-import classes.command.WhileCommand;
-import classes.expression.BinaryExpression;
-import classes.expression.UnaryExpressionId;
-import classes.expression.UnaryExpressionNumber;
-import classes.functionDeclaration.FunctionDeclaration;
-import classes.program.Program;
-import classes.terminal.Identifier;
+import classes.command.*;
+import classes.expression.*;
+import classes.terminal.*;
+import classes.terminal.Number;
+import classes.program.*;
+import classes.functionDeclaration.*;
+
+
 import classes.terminal.Operator;
 
 public class Checker implements Visitor{
@@ -28,10 +22,11 @@ public class Checker implements Visitor{
 	}
 	
 	//'main'
-	public void check(AST a){
+	public void check(AST a) throws SemanticException{
 		a.visit(this, null);
 	}
 	
+	//OK!
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand,Object obj) throws SemanticException {
 		Identifier id = assignmentCommand.getId();
 		AST a = identificationTable.retrieve(id.getSpelling());
@@ -64,6 +59,7 @@ public class Checker implements Visitor{
 		return null;
 	}
 
+	//OK!
 	public Object visitBinaryExpression(BinaryExpression binaryExpression, Object obj) throws SemanticException {
 		String leftExpType = (String)binaryExpression.getLeftExpression().visit(this, obj);
 		String rightExpType = (String)binaryExpression.getRightExpression().visit(this, obj);
@@ -99,12 +95,20 @@ public class Checker implements Visitor{
 		return null;
 	}
 
-	public Object visitFunctionCallCommand(
-			FunctionCallCommand functionCallCommand, Object obj) {
+	//OK!
+	public Object visitFunctionCallCommand(FunctionCallCommand functionCallCommand, Object obj) throws SemanticException {
+		visitIdentifier(functionCallCommand.getIdentifier(), obj);
+		
+		AST a = identificationTable.retrieve(functionCallCommand.getIdentifier().getSpelling());
+		
+		if(functionCallCommand.getArguments().size() != ((FunctionDeclaration)a).getParameters().size()){
+			throw new SemanticException("Argumentos inválidos!");
+		}
 		
 		return null;
 	}
 
+	//SEMI OK!
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException {
 		Identifier fdId = functionDeclaration.getIdentifier();
 
@@ -115,8 +119,15 @@ public class Checker implements Visitor{
 			//TODO: Revisar a necessidade do scope
 			identificationTable.openScope();
 			//TODO: Parametros? + Object para tratar return
-			for(Command cmd : functionDeclaration.getCommands())
+			for(Command cmd : functionDeclaration.getCommands()){
 				cmd.visit(this, obj);
+				
+				//TODO: Como trata o return?
+				if(cmd instanceof ReturnCommand){
+					((ReturnCommand)cmd).visit(this, obj);
+				}
+			}
+			
 			identificationTable.closeScope();
 		}else{
 			throw new SemanticException ("Função já existente!");
@@ -124,6 +135,7 @@ public class Checker implements Visitor{
 		return null;
 	}
 
+	//OK!
 	public Object visitIdentifier(Identifier identifier, Object obj) throws SemanticException {
 		AST a = identificationTable.retrieve(identifier.getSpelling());
 		if (a!=null){
@@ -139,18 +151,20 @@ public class Checker implements Visitor{
 		return null;
 	}
 
+	//OK!
 	public Object visitNumber(Number number, Object obj) {
-		//TODO: O que fazer?!
-		return null;
+		return number.getKind();
 	}
 
+	//OK!
 	public Object visitOperator(Operator operator, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return operator.getKind();
 	}
 
-	public Object visitPrintCommand(PrintCommand printCommand, Object obj) {
-		// TODO Auto-generated method stub
+	//OK!
+	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException {
+		if(printCommand.getE() != null)
+			printCommand.getE().visit(this, obj);
 		return null;
 	}
 
@@ -159,13 +173,15 @@ public class Checker implements Visitor{
 		return null;
 	}
 
-	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) {
+	//OK!
+	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) throws SemanticException {
 		unaryExpressionId.getIdentifier().visit(this, obj);
 		String idType = ((AssignmentCommand)unaryExpressionId.getIdentifier().getDeclaration()).getType();
 		unaryExpressionId.setType(idType);
 		return idType;
 	}
 
+	//OK!
 	public Object visitUnaryExpressionNumber(UnaryExpressionNumber unaryExpressionNumber, Object obj) {
 		unaryExpressionNumber.getNumber().visit(this, obj);
 		String numberType = unaryExpressionNumber.getNumber().getKind() + "";
@@ -177,10 +193,15 @@ public class Checker implements Visitor{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	public Object visitProgram(Program program, Object obj) {
-		// TODO Auto-generated method stub
+	
+	//OK!
+	public Object visitProgram(Program program, Object obj) throws SemanticException {
+		for(FunctionDeclaration fd : program.getFunctions()){
+			fd.visit(this, obj);
+		}
+		for(Command cmd : program.getCommands()){
+			cmd.visit(this, obj);
+		}
 		return null;
 	}
-
 }

@@ -2,6 +2,7 @@ package classes.command;
 
 import java.util.ArrayList;
 
+import checker.SemanticException;
 import checker.Visitor;
 import classes.expression.Expression;
 import classes.terminal.Identifier;
@@ -9,8 +10,8 @@ import classes.terminal.Identifier;
 
 public class FunctionCallCommand extends Command {
 
-	Identifier identifier;
-	ArrayList<Expression> arguments = new ArrayList<Expression>();
+	private Identifier identifier;
+	private ArrayList<Expression> arguments = new ArrayList<Expression>();
 	
 	public FunctionCallCommand(Identifier identifier, ArrayList<Expression> arguments){
 		this.identifier = identifier;
@@ -24,9 +25,23 @@ public class FunctionCallCommand extends Command {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitFunctionCallCommand(this, obj);
 	}
-	
+
+	public Identifier getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(Identifier identifier) {
+		this.identifier = identifier;
+	}
+
+	public ArrayList<Expression> getArguments() {
+		return arguments;
+	}
+
+	public void setArguments(ArrayList<Expression> arguments) {
+		this.arguments = arguments;
+	}
 }

@@ -1,5 +1,6 @@
 package util.AST;
 
+import checker.SemanticException;
 import checker.Visitor;
 
 /**
@@ -11,7 +12,7 @@ import checker.Visitor;
  */
 public abstract class AST {
 	
-	public abstract Object visit(Visitor visitor, Object obj);
+	public abstract Object visit(Visitor visitor, Object obj) throws SemanticException;
 	
 	public String getSpaces(int level) {
 		StringBuffer str = new StringBuffer();

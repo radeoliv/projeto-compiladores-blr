@@ -19,8 +19,7 @@ public class ReturnCommand extends Command {
 
 	@Override
 	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visitReturnCommand(this, obj);
 	}
 
 }

@@ -1,5 +1,6 @@
 package classes.terminal;
 
+import checker.SemanticException;
 import checker.Visitor;
 import scanner.Token;
 import util.AST.AST;
@@ -20,9 +21,8 @@ public class Identifier extends Terminal {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitIdentifier(this, obj);
 	}
 	
 	// GET SET

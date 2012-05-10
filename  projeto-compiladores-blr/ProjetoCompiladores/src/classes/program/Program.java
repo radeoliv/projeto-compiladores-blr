@@ -3,14 +3,15 @@ package classes.program;
 import java.util.ArrayList;
 
 import util.AST.AST;
+import checker.SemanticException;
 import checker.Visitor;
 import classes.command.Command;
 import classes.functionDeclaration.FunctionDeclaration;
 
 public class Program extends AST {
 	
-	ArrayList<Command> commands;
-	ArrayList<FunctionDeclaration> functions;
+	private ArrayList<Command> commands;
+	private ArrayList<FunctionDeclaration> functions;
 	
 	public Program(ArrayList<Command> commands, ArrayList<FunctionDeclaration> functions){
 		this.commands = commands;
@@ -24,9 +25,23 @@ public class Program extends AST {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitProgram(this, obj);
 	}
 
+	public ArrayList<Command> getCommands() {
+		return commands;
+	}
+
+	public void setCommands(ArrayList<Command> commands) {
+		this.commands = commands;
+	}
+
+	public ArrayList<FunctionDeclaration> getFunctions() {
+		return functions;
+	}
+
+	public void setFunctions(ArrayList<FunctionDeclaration> functions) {
+		this.functions = functions;
+	}
 }

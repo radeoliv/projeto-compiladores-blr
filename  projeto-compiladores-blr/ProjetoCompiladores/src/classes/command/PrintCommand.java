@@ -1,11 +1,12 @@
 package classes.command;
 
+import checker.SemanticException;
 import checker.Visitor;
 import classes.expression.Expression;
 
 public class PrintCommand extends Command {
 
-	Expression e;
+	private Expression e;
 	
 	public PrintCommand(Expression e){
 		this.e = e;
@@ -18,12 +19,18 @@ public class PrintCommand extends Command {
 		return null;
 	}
 
-
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitPrintCommand(this, obj);
 	}
-	
+
+
+	public Expression getE() {
+		return e;
+	}
+
+	public void setE(Expression e) {
+		this.e = e;
+	}	
 
 }
