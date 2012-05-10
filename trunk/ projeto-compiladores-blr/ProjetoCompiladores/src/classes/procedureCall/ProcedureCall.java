@@ -1,19 +1,20 @@
-package classes.command;
+package classes.procedureCall;
 
 import java.util.ArrayList;
 
 import checker.SemanticException;
 import checker.Visitor;
+import classes.command.Command;
 import classes.expression.Expression;
 import classes.terminal.Identifier;
 
 
-public class FunctionCallCommand extends Command {
+public class ProcedureCall extends Command {
 
 	private Identifier identifier;
 	private ArrayList<Expression> arguments = new ArrayList<Expression>();
 	
-	public FunctionCallCommand(Identifier identifier, ArrayList<Expression> arguments){
+	public ProcedureCall(Identifier identifier, ArrayList<Expression> arguments){
 		this.identifier = identifier;
 		this.arguments = arguments;
 	}

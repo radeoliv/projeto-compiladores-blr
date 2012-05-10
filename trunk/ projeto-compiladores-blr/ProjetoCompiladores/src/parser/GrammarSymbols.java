@@ -50,11 +50,12 @@ public class GrammarSymbols {
 	public static final int DO = 992;
 	public static final int BREAK = 993;
 	public static final int PRINT = 994;
+	public static final int CALL = 995;
 	
 	// Token types
-	public static final int MULTIPLICATIVE_OPERATOR = 995;
-	public static final int ADDITIVE_OPERATOR = 996;
-	public static final int RELATIONAL_OPERATOR = 997;
+	public static final int MULTIPLICATIVE_OPERATOR = 996;
+	public static final int ADDITIVE_OPERATOR = 997;
+	public static final int RELATIONAL_OPERATOR = 998;
 	
 	public static final int ERROR = 999;
 	public static final int EOT = 1000;

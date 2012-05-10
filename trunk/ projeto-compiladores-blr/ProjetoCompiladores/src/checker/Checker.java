@@ -7,6 +7,7 @@ import classes.command.*;
 import classes.expression.*;
 import classes.terminal.*;
 import classes.terminal.Number;
+import classes.procedureCall.ProcedureCall;
 import classes.program.*;
 import classes.functionDeclaration.*;
 
@@ -96,7 +97,7 @@ public class Checker implements Visitor{
 	}
 
 	//OK!
-	public Object visitFunctionCallCommand(FunctionCallCommand functionCallCommand, Object obj) throws SemanticException {
+	public Object visitFunctionCallCommand(ProcedureCall functionCallCommand, Object obj) throws SemanticException {
 		visitIdentifier(functionCallCommand.getIdentifier(), obj);
 		
 		AST a = identificationTable.retrieve(functionCallCommand.getIdentifier().getSpelling());
