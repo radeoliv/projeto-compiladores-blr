@@ -1,5 +1,6 @@
 package classes.command;
 
+import checker.SemanticException;
 import checker.Visitor;
 import classes.expression.Expression;
 import classes.terminal.Identifier;
@@ -17,9 +18,8 @@ public class AssignmentCommand extends Command {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitAssignmentCommand(this, obj);
 	}
 	
 	// GET SET

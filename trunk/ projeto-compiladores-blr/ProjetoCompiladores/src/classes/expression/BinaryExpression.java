@@ -1,5 +1,6 @@
 package classes.expression;
 
+import checker.SemanticException;
 import checker.Visitor;
 import classes.terminal.Operator;
 
@@ -23,9 +24,8 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitBinaryExpression(this, obj);
 	}
 
 	public Expression getLeftExpression() {

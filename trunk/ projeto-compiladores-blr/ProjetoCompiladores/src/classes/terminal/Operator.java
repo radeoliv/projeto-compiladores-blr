@@ -17,8 +17,7 @@ public class Operator extends Terminal {
 
 	@Override
 	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visitOperator(this, obj);
 	}
 	
 	public int getKind(){

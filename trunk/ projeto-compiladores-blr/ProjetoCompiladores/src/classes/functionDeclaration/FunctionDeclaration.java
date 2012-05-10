@@ -2,6 +2,7 @@ package classes.functionDeclaration;
 
 import java.util.ArrayList;
 import util.AST.AST;
+import checker.SemanticException;
 import checker.Visitor;
 import classes.command.Command;
 import classes.terminal.Identifier;
@@ -25,9 +26,8 @@ public class FunctionDeclaration extends AST {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitFunctionDeclaration(this, obj);
 	}
 	
 	// GET SET

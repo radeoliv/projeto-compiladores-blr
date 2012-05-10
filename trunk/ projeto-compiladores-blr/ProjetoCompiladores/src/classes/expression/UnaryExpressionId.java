@@ -1,5 +1,6 @@
 package classes.expression;
 
+import checker.SemanticException;
 import checker.Visitor;
 import classes.terminal.Identifier;
 
@@ -19,9 +20,8 @@ public class UnaryExpressionId extends UnaryExpression {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitUnaryExpressionId(this, obj);
 	}
 
 	public Identifier getIdentifier() {

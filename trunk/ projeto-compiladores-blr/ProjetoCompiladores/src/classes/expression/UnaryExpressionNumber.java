@@ -20,8 +20,7 @@ public class UnaryExpressionNumber extends UnaryExpression {
 
 	@Override
 	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visitUnaryExpressionNumber(this, obj);
 	}
 
 	public Number getNumber() {

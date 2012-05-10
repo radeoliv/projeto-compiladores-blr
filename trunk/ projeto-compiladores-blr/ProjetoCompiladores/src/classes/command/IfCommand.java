@@ -25,8 +25,7 @@ public class IfCommand extends Command {
 
 	@Override
 	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visitIfCommand(this, obj);
 	}
 	
 

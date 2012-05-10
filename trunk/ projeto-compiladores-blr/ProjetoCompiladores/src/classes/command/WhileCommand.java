@@ -23,8 +23,7 @@ public class WhileCommand extends Command {
 
 	@Override
 	public Object visit(Visitor visitor, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visitWhileCommand(this, obj);
 	}
 	
 
