@@ -4,7 +4,7 @@ import checker.Visitor;
 import scanner.Token;
 
 public class Number extends Terminal {
-
+	
 	public Number(Token token){
 		super.token = token;
 	}
@@ -20,6 +20,9 @@ public class Number extends Terminal {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	
+	public int getKind(){
+		return super.token.getKind();
+	}
+
 }

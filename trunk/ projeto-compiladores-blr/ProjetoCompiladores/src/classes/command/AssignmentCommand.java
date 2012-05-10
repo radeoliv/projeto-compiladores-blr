@@ -8,7 +8,7 @@ public class AssignmentCommand extends Command {
 	
 	private Identifier id;
 	private Expression e;
-	
+	private String type;
 	
 	@Override
 	public String toString(int level) {
@@ -43,4 +43,13 @@ public class AssignmentCommand extends Command {
 		this.id = id;
 		this.e = e;
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 }

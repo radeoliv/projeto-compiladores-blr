@@ -21,6 +21,8 @@ public class Operator extends Terminal {
 		return null;
 	}
 	
-	
+	public int getKind(){
+		return super.token.getKind();
+	}
 
 }

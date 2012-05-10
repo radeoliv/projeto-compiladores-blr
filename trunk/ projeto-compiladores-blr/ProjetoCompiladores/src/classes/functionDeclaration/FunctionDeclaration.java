@@ -10,7 +10,7 @@ public class FunctionDeclaration extends AST {
 
 	private Identifier identifier;
 	private ArrayList<Identifier> parameters;
-	ArrayList<Command> commands;
+	private ArrayList<Command> commands;
 	
 	public FunctionDeclaration(Identifier identifier, ArrayList<Identifier> parameters, ArrayList<Command> commands){
 		this.identifier = identifier;
@@ -47,4 +47,11 @@ public class FunctionDeclaration extends AST {
 		this.parameters = parameters;
 	}
 
+	public ArrayList<Command> getCommands() {
+		return commands;
+	}
+
+	public void setCommands(ArrayList<Command> commands) {
+		this.commands = commands;
+	}
 }
