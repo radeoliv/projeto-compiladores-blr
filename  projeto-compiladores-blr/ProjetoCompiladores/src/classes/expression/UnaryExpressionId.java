@@ -5,8 +5,8 @@ import classes.terminal.Identifier;
 
 public class UnaryExpressionId extends UnaryExpression {
 
-	Identifier identifier;
-	String type;
+	private Identifier identifier;
+	private String type;
 	
 	public UnaryExpressionId(Identifier identifier){
 		this.identifier = identifier;
@@ -22,5 +22,21 @@ public class UnaryExpressionId extends UnaryExpression {
 	public Object visit(Visitor visitor, Object obj) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public Identifier getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(Identifier identifier) {
+		this.identifier = identifier;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

@@ -5,8 +5,8 @@ import classes.terminal.Number;
 
 public class UnaryExpressionNumber extends UnaryExpression {
 
-	Number number;
-	String type;
+	private Number number;
+	private String type;
 	
 	public UnaryExpressionNumber(Number number){
 		this.number = number;
@@ -23,6 +23,21 @@ public class UnaryExpressionNumber extends UnaryExpression {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 
+	public Number getNumber() {
+		return number;
+	}
+
+	public void setNumber(Number number) {
+		this.number = number;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 }

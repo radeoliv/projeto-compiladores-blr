@@ -9,11 +9,10 @@ public class Identifier extends Terminal {
 	private String spelling;
 	private AST declaration;
 	
-	
 	public Identifier(Token token){
 		super.token = token;
 	}
-	
+
 	@Override
 	public String toString(int level) {
 		// TODO Auto-generated method stub
@@ -42,7 +41,4 @@ public class Identifier extends Terminal {
 	public void setDeclaration(AST declaration) {
 		this.declaration = declaration;
 	}
-
-	
-
 }
