@@ -42,7 +42,8 @@ public class IdentificationTable {
 		this.table.put(new Key(0, "return"), null);
 		this.table.put(new Key(0, "break"), null);	
 		this.table.put(new Key(0, "print"), null);
-
+		this.table.put(new Key(0, "call"), null);
+		
 		// Initializes currentScope to 0 (global)
 		this.currentScope = 0;
 	}
@@ -162,6 +163,8 @@ public class IdentificationTable {
 			value = GrammarSymbols.BREAK;
 		} else if (string.equals("print")){
 			value = GrammarSymbols.PRINT;
+		} else if (string.equals("call")){
+			value = GrammarSymbols.CALL;
 		}
 		return value;
 	}

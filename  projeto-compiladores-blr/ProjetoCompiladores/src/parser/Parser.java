@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import classes.command.*;
 import classes.expression.*;
 import classes.functionDeclaration.FunctionDeclaration;
+import classes.procedureCall.ProcedureCall;
 import classes.program.Program;
 import classes.terminal.*;
 import classes.terminal.Number;
@@ -71,7 +72,8 @@ public class Parser {
 	}
 	
 	private Program parseProgram () throws LexicalException, SyntacticException{		
-		// program ::= (command | functionDeclaration)*
+		// 1ª MUDANÇA
+		// program ::= command* functionDeclaration*
 		
 		ArrayList <FunctionDeclaration> functions = new ArrayList <FunctionDeclaration>();
 		ArrayList <Command> commands = new ArrayList <Command>();
@@ -91,22 +93,21 @@ public class Parser {
 		
 		Command commandAST = null;
 		
-		
+		// 2ª MUDANÇA
 		if (currentToken.getKind() == GrammarSymbols.ID){
+			// command ::= identifier = expression
+			
 			Identifier id = new Identifier (currentToken);
 			acceptIt();
+			accept(GrammarSymbols.ASSIGNMENT);
+			Expression e = parseExpression();
+			commandAST = new AssignmentCommand(id,e);
 			
-			// command ::= identifier = expression
-			if(currentToken.getKind() == GrammarSymbols.ASSIGNMENT){
-				acceptIt();
-				Expression e = parseExpression();
-				commandAST = new AssignmentCommand(id,e);
-				
-			// command ::=  functionCall	
-			} else {
-				commandAST = parseFunctionCall(id);
-			}
-			
+		// 2ª MUDANÇA
+		// command ::=  procedureCall	
+		}else if(currentToken.getKind() == GrammarSymbols.CALL){
+			commandAST = parseProcedureCall();
+		
 			
 		// command ::= while expression do (command)* end
 		}else if(currentToken.getKind() == GrammarSymbols.WHILE){
@@ -171,15 +172,17 @@ public class Parser {
 			
 			commandAST = new PrintCommand (e);
 			accept(GrammarSymbols.RIGHT_PARENTHESIS);
+			
 		}else{
 			throw new SyntacticException("Not expected token!", currentToken);
 		}
 		return commandAST;
 	}
 	
+	// 3ª MUDANÇA
 	private FunctionDeclaration parseFunctionDeclaration () throws LexicalException, SyntacticException{
-		//functionDeclaration ::= function identifier ( (parameters)? ) (command)* end
-				
+		//functionDeclaration ::= function identifier ( (parameters)? ) (command)* (return (expression)?)? end
+		
 		accept(GrammarSymbols.FUNCTION);
 		Identifier id = new Identifier(currentToken);
 		accept(GrammarSymbols.ID);
@@ -187,18 +190,27 @@ public class Parser {
 		
 		ArrayList<Identifier> parameters = new ArrayList<Identifier>();
 		ArrayList<Command> commands = new ArrayList<Command>();
+		Expression e = null;
 		
 		if(currentToken.getKind() != GrammarSymbols.RIGHT_PARENTHESIS){
 			parameters = parseParameters();
 		}
 		accept(GrammarSymbols.RIGHT_PARENTHESIS);
 		
-		while (currentToken.getKind() != GrammarSymbols.END){
+		while (currentToken.getKind() != GrammarSymbols.END && currentToken.getKind() != GrammarSymbols.RETURN){
 			commands.add(parseCommand());
 		}
 		
-		FunctionDeclaration fd = new FunctionDeclaration (id, parameters, commands);
-		acceptIt();
+		if (currentToken.getKind() == GrammarSymbols.RETURN){
+			acceptIt();
+			if (currentToken.getKind() != GrammarSymbols.END){
+				e = parseExpression (); 
+			}
+		}
+		accept (GrammarSymbols.END);
+		
+		FunctionDeclaration fd = new FunctionDeclaration (id, parameters, commands, e);
+		//acceptIt(); ???? TAVA FAZENDO OQ AQUI?
 		return fd;
 	}
 	
@@ -228,18 +240,22 @@ public class Parser {
 		return identifiers;
 	}
 	
-	private FunctionCallCommand parseFunctionCall(Identifier id) throws LexicalException, SyntacticException{
-		// functionCall ::=  identifier ( (arguments)? )
-		FunctionCallCommand fc;
+	// 2ª MUDANÇA
+	private ProcedureCall parseProcedureCall() throws LexicalException, SyntacticException{
+		//procedureCall ::= call identifier ( (arguments)? )
+		ProcedureCall fc;
 		ArrayList<Expression> arguments = new ArrayList<Expression>();
-
+	
+		accept(GrammarSymbols.CALL);
+		Identifier id = new Identifier(currentToken);
+		accept(GrammarSymbols.ID);
 		accept(GrammarSymbols.LEFT_PARENTHESIS);
 			
 		if(currentToken.getKind() != GrammarSymbols.RIGHT_PARENTHESIS){
 			arguments = parseArguments();
 		}
 		accept(GrammarSymbols.RIGHT_PARENTHESIS);
-		fc = new FunctionCallCommand (id,arguments);
+		fc = new ProcedureCall (id, arguments);
 		
 		return fc;
 	}
@@ -321,22 +337,40 @@ public class Parser {
 		return binaryE;
 	}
 	
+	// 4ª MUDANÇA
 	private Expression parseBaseExpression () throws LexicalException, SyntacticException{
 		// baseExpression ::= ( expression ) | number | identifier
+		// baseExpression ::= ( expression ) | number | identifier (nil | ( (arguments)? ) )
+		
 		Expression e = null;
 		
 		if (currentToken.getKind() == GrammarSymbols.LEFT_PARENTHESIS){
 			acceptIt();
 			e = parseExpression();
 			accept(GrammarSymbols.RIGHT_PARENTHESIS);
+			
 		}else if (currentToken.getKind() == GrammarSymbols.INT || currentToken.getKind() == GrammarSymbols.FLOAT){
 			Number n = new Number (currentToken);
 			e = new UnaryExpressionNumber(n);
 			acceptIt();
+			
 		}else if(currentToken.getKind() == GrammarSymbols.ID){
 			Identifier id = new Identifier(currentToken);
+			ArrayList<Expression> arguments;
+			
+			acceptIt ();
+			if (currentToken.getKind() == GrammarSymbols.LEFT_PARENTHESIS){
+				acceptIt();
+				if (currentToken.getKind() != GrammarSymbols.RIGHT_PARENTHESIS){
+					arguments = parseArguments();
+				}
+				accept (GrammarSymbols.RIGHT_PARENTHESIS);
+			}
+						
+			// :TODO MUDARRRRRRRRRRRR A CRIAÇÃOOOOOOOOOOOOOOO
 			e = new UnaryExpressionId(id);
-			acceptIt();
+			//acceptIt(); ???? TAVA FAZENDO OQ AQUI?
+			
 		}else{
 			throw new SyntacticException("Not expected token!", currentToken);
 		}

@@ -2,7 +2,6 @@ package checker;
 
 import classes.command.AssignmentCommand;
 import classes.command.BreakCommand;
-import classes.command.FunctionCallCommand;
 import classes.command.IfCommand;
 import classes.command.PrintCommand;
 import classes.command.ReturnCommand;
@@ -11,6 +10,7 @@ import classes.expression.BinaryExpression;
 import classes.expression.UnaryExpressionId;
 import classes.expression.UnaryExpressionNumber;
 import classes.functionDeclaration.FunctionDeclaration;
+import classes.procedureCall.ProcedureCall;
 import classes.program.Program;
 import classes.terminal.Identifier;
 import classes.terminal.Operator;
@@ -21,7 +21,7 @@ public interface Visitor {
 	// Command
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand, Object obj) throws SemanticException;
 	public Object visitBreakCommand(BreakCommand breakCommand, Object obj);
-	public Object visitFunctionCallCommand(FunctionCallCommand functionCallCommand, Object obj) throws SemanticException;
+	public Object visitFunctionCallCommand(ProcedureCall functionCallCommand, Object obj) throws SemanticException;
 	public Object visitIfCommand(IfCommand ifCommand, Object obj);
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException;
 	public Object visitReturnCommand(ReturnCommand returnCommand, Object obj);
