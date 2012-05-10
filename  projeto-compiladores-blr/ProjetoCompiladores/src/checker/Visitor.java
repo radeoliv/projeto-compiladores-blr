@@ -12,6 +12,7 @@ import classes.expression.UnaryExpressionNumber;
 import classes.functionDeclaration.FunctionDeclaration;
 import classes.procedureCall.ProcedureCall;
 import classes.program.Program;
+import classes.root.Root;
 import classes.terminal.Identifier;
 import classes.terminal.Operator;
 import classes.terminal.Number;
@@ -37,6 +38,9 @@ public interface Visitor {
 	
 	// Program
 	public Object visitProgram(Program program, Object obj) throws SemanticException;
+	
+	// Root
+	public Object visitRoot(Root root, Object obj) throws SemanticException;
 	
 	// Terminal
 	public Object visitIdentifier(Identifier identifier, Object obj) throws SemanticException;

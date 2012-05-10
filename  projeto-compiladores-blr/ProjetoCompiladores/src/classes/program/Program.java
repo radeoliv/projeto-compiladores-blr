@@ -10,12 +10,15 @@ import classes.functionDeclaration.FunctionDeclaration;
 
 public class Program extends AST {
 	
-	private ArrayList<Command> commands;
-	private ArrayList<FunctionDeclaration> functions;
+	private Command command;
+	private FunctionDeclaration function;
 	
-	public Program(ArrayList<Command> commands, ArrayList<FunctionDeclaration> functions){
-		this.commands = commands;
-		this.functions = functions;
+	public Program(Command command){
+		this.command = command;
+	}
+	
+	public Program(FunctionDeclaration function){
+		this.function = function;
 	}
 
 	@Override
@@ -29,19 +32,19 @@ public class Program extends AST {
 		return visitor.visitProgram(this, obj);
 	}
 
-	public ArrayList<Command> getCommands() {
-		return commands;
+	public Command getCommand() {
+		return command;
 	}
 
-	public void setCommands(ArrayList<Command> commands) {
-		this.commands = commands;
+	public void setCommand(Command command) {
+		this.command = command;
 	}
 
-	public ArrayList<FunctionDeclaration> getFunctions() {
-		return functions;
+	public FunctionDeclaration getFunction() {
+		return function;
 	}
 
-	public void setFunctions(ArrayList<FunctionDeclaration> functions) {
-		this.functions = functions;
+	public void setFunction(FunctionDeclaration function) {
+		this.function = function;
 	}
 }
