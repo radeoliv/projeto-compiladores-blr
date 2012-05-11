@@ -1,14 +1,15 @@
 package classes.command;
 
+import checker.SemanticException;
 import checker.Visitor;
 import classes.expression.Expression;
 
 public class ReturnCommand extends Command {
 
-	Expression e;
+	private Expression expression;
 	
-	public ReturnCommand(Expression e){
-		this.e = e;
+	public ReturnCommand(Expression expression){
+		this.expression = expression;
 	}
 	
 	@Override
@@ -18,8 +19,17 @@ public class ReturnCommand extends Command {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
 		return visitor.visitReturnCommand(this, obj);
+	}
+
+	
+	public Expression getExpression() {
+		return expression;
+	}
+
+	public void setExpression(Expression expression) {
+		this.expression = expression;
 	}
 
 }

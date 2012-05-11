@@ -8,8 +8,13 @@ import classes.terminal.Identifier;
 public class AssignmentCommand extends Command {
 	
 	private Identifier id;
-	private Expression e;
+	private Expression expression;
 	private String type;
+	
+	public AssignmentCommand(Identifier id, Expression e){
+		this.id = id;
+		this.expression = expression;
+	}
 	
 	@Override
 	public String toString(int level) {
@@ -31,17 +36,12 @@ public class AssignmentCommand extends Command {
 		this.id = id;
 	}
 
-	public Expression getE() {
-		return e;
+	public Expression getExpression() {
+		return expression;
 	}
 
-	public void setE(Expression e) {
-		this.e = e;
-	}
-
-	public AssignmentCommand(Identifier id, Expression e){
-		this.id = id;
-		this.e = e;
+	public void setExpression(Expression expression) {
+		this.expression = expression;
 	}
 
 	public String getType() {

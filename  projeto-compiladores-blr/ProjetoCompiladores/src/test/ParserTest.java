@@ -11,6 +11,7 @@ public class ParserTest {
 		Parser parser = new Parser();
 		try {
 			AST ast = parser.parse();
+			System.out.print("Correto!");
 		} catch (SyntacticException e) {
 			e.printStackTrace();
 		} catch (LexicalException e) {

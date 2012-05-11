@@ -22,18 +22,18 @@ public interface Visitor {
 	
 	// Command
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand, Object obj) throws SemanticException;
-	public Object visitBreakCommand(BreakCommand breakCommand, Object obj);
-	public Object visitFunctionCallCommand(ProcedureCall functionCallCommand, Object obj) throws SemanticException;
-	public Object visitIfCommand(IfCommand ifCommand, Object obj);
+	public Object visitBreakCommand(BreakCommand breakCommand, Object obj) throws SemanticException;
+	public Object visitProcedureCall(ProcedureCall procedureCall, Object obj) throws SemanticException;
+	public Object visitIfCommand(IfCommand ifCommand, Object obj) throws SemanticException;
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException;
-	public Object visitReturnCommand(ReturnCommand returnCommand, Object obj);
-	public Object visitWhileCommand(WhileCommand whileCommand, Object obj);
+	public Object visitReturnCommand(ReturnCommand returnCommand, Object obj) throws SemanticException;
+	public Object visitWhileCommand(WhileCommand whileCommand, Object obj) throws SemanticException;
 	
 	// Expression
 	public Object visitBinaryExpression(BinaryExpression binaryExpression, Object obj) throws SemanticException;
 	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) throws SemanticException;
 	public Object visitUnaryExpressionNumber (UnaryExpressionNumber unaryExpressionNumber, Object obj);
-	public Object visitUnaryExpressionFunction (UnaryExpressionFunction unaryExpressionFunction, Object obj);
+	public Object visitUnaryExpressionFunction (UnaryExpressionFunction unaryExpressionFunction, Object obj) throws SemanticException;
 	
 	// Function Declaration
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException;

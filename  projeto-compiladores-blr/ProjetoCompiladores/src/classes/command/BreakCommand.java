@@ -1,5 +1,6 @@
 package classes.command;
 
+import checker.SemanticException;
 import checker.Visitor;
 
 public class BreakCommand extends Command {
@@ -11,7 +12,7 @@ public class BreakCommand extends Command {
 	}
 
 	@Override
-	public Object visit(Visitor visitor, Object obj) {
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
 		return visitor.visitBreakCommand(this, obj);
 	}
 

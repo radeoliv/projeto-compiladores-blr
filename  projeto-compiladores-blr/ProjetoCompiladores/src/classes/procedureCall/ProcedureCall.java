@@ -31,7 +31,7 @@ public class ProcedureCall extends Command {
 
 	@Override
 	public Object visit(Visitor visitor, Object obj) throws SemanticException {
-		return visitor.visitFunctionCallCommand(this, obj);
+		return visitor.visitProcedureCall(this, obj);
 	}
 
 	public Identifier getIdentifier() {
