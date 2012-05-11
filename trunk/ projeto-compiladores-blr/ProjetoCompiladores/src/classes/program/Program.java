@@ -11,12 +11,17 @@ public class Program extends AST {
 	private Command command;
 	private FunctionDeclaration function;
 	
+	// Nos construtores os valores são null pq no checker o método para Program
+	// verifica através do valor null se o Program é um commando ou uma função
+	
 	public Program(Command command){
 		this.command = command;
+		this.function = null;
 	}
 	
 	public Program(FunctionDeclaration function){
 		this.function = function;
+		this.command = null;
 	}
 
 	@Override
