@@ -96,7 +96,6 @@ public class Checker implements Visitor{
 		}
 		
 		binaryExpression.setType(binaryType);
-		
 		return binaryType;
 	}
 
@@ -192,7 +191,7 @@ public class Checker implements Visitor{
 		if (a!=null){
 			 identifier.setDeclaration(a);
 		}else{
-			throw new SemanticException ("Identificador não declarado!");
+			throw new SemanticException ("Identificador não existe!");
 		}
 		return null;
 	}
