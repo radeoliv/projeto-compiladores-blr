@@ -10,6 +10,10 @@ public class UnaryExpressionFunction extends UnaryExpression{
 	private Identifier identifier;
 	private ArrayList<Expression> arguments;
 	
+	public UnaryExpressionFunction(Identifier identifier){
+		this(identifier, new ArrayList<Expression>());
+	}
+	
 	public UnaryExpressionFunction(Identifier identifier, ArrayList<Expression> arguments){
 		this.identifier = identifier;
 		this.arguments = arguments;
