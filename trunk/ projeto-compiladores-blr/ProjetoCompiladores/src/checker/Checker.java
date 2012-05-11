@@ -137,6 +137,9 @@ public class Checker implements Visitor{
 	}
 	
 	// OK! REVISAR
+	//: TODO As variáveis dentro do escopo da função são locais, né?
+	//Tem que verificar ainda que se eu declarar com o mesmo nome de uma global funciona, é isso?
+	
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException {
 		Identifier fdId = functionDeclaration.getIdentifier();
 
