@@ -41,7 +41,7 @@ public class Parser {
 	}
 	
 	/**
-	 * Veririfes if the current token kind is the expected one
+	 * Verifies if the current token kind is the expected one
 	 * @param kind
 	 * @throws SyntacticException
 	 * @throws LexicalException 
@@ -66,11 +66,9 @@ public class Parser {
 	 * @throws SyntacticException
 	 * @throws LexicalException 
 	 */
-	
-	// 1ª MUDANÇA
 	public AST parse() throws SyntacticException, LexicalException {
 		Root rootAST = parseRoot();
-		accept (GrammarSymbols.EOT);
+		accept(GrammarSymbols.EOT);
 		return rootAST;
 	}
 	
@@ -81,17 +79,17 @@ public class Parser {
 		while (currentToken.getKind() != GrammarSymbols.EOT){
 			programs.add(parseProgram());
 		}
-		return null;
+		return new Root(programs);
 	}
-	private Program parseProgram () throws LexicalException, SyntacticException{		
+	private Program parseProgram() throws LexicalException, SyntacticException{		
 		
-		// program ::= (command | functionDeclaration)*	
+		// program ::= command | functionDeclaration
 		Program program = null;
 		
 		if (currentToken.getKind() == GrammarSymbols.FUNCTION){
-			program = new Program (parseFunctionDeclaration());
+			program = new Program(parseFunctionDeclaration());
 		}else{
-			program = new Program (parseCommand());
+			program = new Program(parseCommand());
 		}
 		
 		return program;
@@ -101,7 +99,6 @@ public class Parser {
 		
 		Command commandAST = null;
 		
-		// 2ª MUDANÇA
 		if (currentToken.getKind() == GrammarSymbols.ID){
 			// command ::= identifier = expression
 			
@@ -111,11 +108,9 @@ public class Parser {
 			Expression e = parseExpression();
 			commandAST = new AssignmentCommand(id,e);
 			
-		// 2ª MUDANÇA
 		// command ::=  procedureCall	
 		}else if(currentToken.getKind() == GrammarSymbols.CALL){
 			commandAST = parseProcedureCall();
-		
 			
 		// command ::= while expression do (command)* end
 		}else if(currentToken.getKind() == GrammarSymbols.WHILE){
@@ -152,17 +147,6 @@ public class Parser {
 			commandAST = new IfCommand (condition, ifCommands, elseCommands);
 			acceptIt();
 			
-		// command ::= return (expression)? ;
-		}else if (currentToken.getKind() == GrammarSymbols.RETURN){
-			acceptIt();
-			Expression e = null;
-			if(currentToken.getKind() != GrammarSymbols.SEMICOLON){
-				e = parseExpression();
-			}
-			
-			commandAST = new ReturnCommand(e);
-			accept(GrammarSymbols.SEMICOLON);
-			
 		// command ::= break
 		}else if (currentToken.getKind() == GrammarSymbols.BREAK){
 			acceptIt();
@@ -187,18 +171,21 @@ public class Parser {
 		return commandAST;
 	}
 	
-	// 3ª MUDANÇA
-	private FunctionDeclaration parseFunctionDeclaration () throws LexicalException, SyntacticException{
-		//functionDeclaration ::= function identifier ( (parameters)? ) (command)* (return (expression)?)? end
-		
+	private FunctionDeclaration parseFunctionDeclaration() throws LexicalException, SyntacticException{
+		//functionDeclaration ::= function identifier ( (parameters)? ) (command)* (return expression)? end
+		Identifier id = null;
 		accept(GrammarSymbols.FUNCTION);
-		Identifier id = new Identifier(currentToken);
-		accept(GrammarSymbols.ID);
+		if(currentToken.getKind() == GrammarSymbols.ID){
+			id = new Identifier(currentToken);
+			acceptIt();
+		}else{
+			throw new SyntacticException("Identifier expected!", currentToken);
+		}
 		accept(GrammarSymbols.LEFT_PARENTHESIS);
 		
 		ArrayList<Identifier> parameters = new ArrayList<Identifier>();
 		ArrayList<Command> commands = new ArrayList<Command>();
-		Expression e = null;
+		Expression returnExp = null;
 		
 		if(currentToken.getKind() != GrammarSymbols.RIGHT_PARENTHESIS){
 			parameters = parseParameters();
@@ -211,18 +198,16 @@ public class Parser {
 		
 		if (currentToken.getKind() == GrammarSymbols.RETURN){
 			acceptIt();
-			if (currentToken.getKind() != GrammarSymbols.END){
-				e = parseExpression (); 
-			}
+			returnExp = parseExpression();
 		}
-		accept (GrammarSymbols.END);
+		accept(GrammarSymbols.END);
 		
-		FunctionDeclaration fd = new FunctionDeclaration (id, parameters, commands, e);
-		//acceptIt(); ???? TAVA FAZENDO OQ AQUI?
+		FunctionDeclaration fd = new FunctionDeclaration (id, parameters, commands, returnExp);
+		
 		return fd;
 	}
 	
-	private ArrayList <Identifier> parseParameters () throws LexicalException, SyntacticException{
+	private ArrayList<Identifier> parseParameters() throws LexicalException, SyntacticException{
 		// parameters ::= identifier ( , identifier)*
 		
 		ArrayList<Identifier> identifiers = new ArrayList<Identifier>();
@@ -248,15 +233,20 @@ public class Parser {
 		return identifiers;
 	}
 	
-	// 2ª MUDANÇA
 	private ProcedureCall parseProcedureCall() throws LexicalException, SyntacticException{
 		//procedureCall ::= call identifier ( (arguments)? )
-		ProcedureCall fc;
+		ProcedureCall fc = null;
 		ArrayList<Expression> arguments = new ArrayList<Expression>();
-	
+		Identifier id = null;
 		accept(GrammarSymbols.CALL);
-		Identifier id = new Identifier(currentToken);
-		accept(GrammarSymbols.ID);
+		
+		if(currentToken.getKind() == GrammarSymbols.ID){
+			id = new Identifier(currentToken);
+			acceptIt();
+		} else {
+			throw new SyntacticException("Identifier expected!", currentToken);
+		}
+		
 		accept(GrammarSymbols.LEFT_PARENTHESIS);
 			
 		if(currentToken.getKind() != GrammarSymbols.RIGHT_PARENTHESIS){
@@ -294,7 +284,6 @@ public class Parser {
 		Operator op = null;
 		Expression rightE = null;
 		BinaryExpression binaryE = new BinaryExpression(leftE, op, rightE);
-		
 		
 		while (currentToken.getKind() == GrammarSymbols.RELATIONAL_OPERATOR){
 			op = new Operator(currentToken);
@@ -345,10 +334,8 @@ public class Parser {
 		return binaryE;
 	}
 	
-	// 4ª MUDANÇA
 	private Expression parseBaseExpression () throws LexicalException, SyntacticException{
-		// baseExpression ::= ( expression ) | number | identifier
-		// baseExpression ::= ( expression ) | number | identifier (nil | ( (arguments)? ) )
+		// baseExpression ::= ( expression ) | number | identifier ( 'vazio' | ( (arguments)? ) )
 		
 		Expression e = null;
 		
@@ -358,31 +345,28 @@ public class Parser {
 			accept(GrammarSymbols.RIGHT_PARENTHESIS);
 			
 		}else if (currentToken.getKind() == GrammarSymbols.INT || currentToken.getKind() == GrammarSymbols.FLOAT){
-			Number n = new Number (currentToken);
+			Number n = new Number(currentToken);
 			e = new UnaryExpressionNumber(n);
 			acceptIt();
 			
 		}else if(currentToken.getKind() == GrammarSymbols.ID){
 			Identifier id = new Identifier(currentToken);
-			ArrayList<Expression> arguments;
-			
 			acceptIt ();
+			e = new UnaryExpressionId(id);
+			
+			ArrayList<Expression> arguments = new ArrayList<Expression>();
+			
 			if (currentToken.getKind() == GrammarSymbols.LEFT_PARENTHESIS){
 				acceptIt();
 				if (currentToken.getKind() != GrammarSymbols.RIGHT_PARENTHESIS){
 					arguments = parseArguments();
+					e = new UnaryExpressionFunction(id, arguments);
 				}
-				accept (GrammarSymbols.RIGHT_PARENTHESIS);
+				accept(GrammarSymbols.RIGHT_PARENTHESIS);
 			}
-						
-			// :TODO MUDARRRRRRRRRRRR A CRIAÇÃOOOOOOOOOOOOOOO
-			e = new UnaryExpressionId(id);
-			//acceptIt(); ???? TAVA FAZENDO OQ AQUI?
-			
 		}else{
 			throw new SyntacticException("Not expected token!", currentToken);
 		}
-		
 		return e;
 	}
 }

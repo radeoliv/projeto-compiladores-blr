@@ -214,6 +214,12 @@ public class Checker implements Visitor{
 		// :TODO
 		return null;
 	}
+
+	@Override
+	public Object visitUnaryExpressionFunction(UnaryExpressionFunction unaryExpressionFunction, Object obj) {
+		//TODO
+		return null;
+	}
 	
 	
 }

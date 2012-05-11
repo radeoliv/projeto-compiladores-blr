@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import checker.SemanticException;
 import checker.Visitor;
-import classes.command.Command;
-import classes.functionDeclaration.FunctionDeclaration;
 import classes.program.Program;
 import util.AST.AST;
 

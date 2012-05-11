@@ -13,15 +13,15 @@ public class FunctionDeclaration extends AST {
 	private Identifier identifier;
 	private ArrayList<Identifier> parameters;
 	private ArrayList<Command> commands;
-	private Expression e;
+	private Expression returnExp;
 	
-	public FunctionDeclaration(Identifier identifier, ArrayList<Identifier> parameters, ArrayList<Command> commands, Expression e){
+	public FunctionDeclaration(Identifier identifier, ArrayList<Identifier> parameters, ArrayList<Command> commands, Expression returnExp){
 		this.identifier = identifier;
 		this.parameters = parameters;
 		this.commands = commands;
-		this.e = e;
+		this.returnExp = returnExp;
 	}
-	
+
 	@Override
 	public String toString(int level) {
 		// TODO Auto-generated method stub
@@ -33,7 +33,6 @@ public class FunctionDeclaration extends AST {
 		return visitor.visitFunctionDeclaration(this, obj);
 	}
 	
-	// GET SET
 	public Identifier getIdentifier() {
 		return identifier;
 	}
@@ -56,5 +55,13 @@ public class FunctionDeclaration extends AST {
 
 	public void setCommands(ArrayList<Command> commands) {
 		this.commands = commands;
+	}
+	
+	public Expression getReturnExp() {
+		return returnExp;
+	}
+
+	public void setReturnExp(Expression returnExp) {
+		this.returnExp = returnExp;
 	}
 }
