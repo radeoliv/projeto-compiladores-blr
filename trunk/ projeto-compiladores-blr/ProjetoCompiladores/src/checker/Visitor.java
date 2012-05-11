@@ -7,6 +7,7 @@ import classes.command.PrintCommand;
 import classes.command.ReturnCommand;
 import classes.command.WhileCommand;
 import classes.expression.BinaryExpression;
+import classes.expression.UnaryExpressionFunction;
 import classes.expression.UnaryExpressionId;
 import classes.expression.UnaryExpressionNumber;
 import classes.functionDeclaration.FunctionDeclaration;
@@ -32,6 +33,7 @@ public interface Visitor {
 	public Object visitBinaryExpression(BinaryExpression binaryExpression, Object obj) throws SemanticException;
 	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) throws SemanticException;
 	public Object visitUnaryExpressionNumber (UnaryExpressionNumber unaryExpressionNumber, Object obj);
+	public Object visitUnaryExpressionFunction (UnaryExpressionFunction unaryExpressionFunction, Object obj);
 	
 	// Function Declaration
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException;

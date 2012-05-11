@@ -1,39 +1,31 @@
-package classes.procedureCall;
+package classes.expression;
 
 import java.util.ArrayList;
 
 import checker.SemanticException;
 import checker.Visitor;
-import classes.command.Command;
-import classes.expression.Expression;
 import classes.terminal.Identifier;
 
-
-public class ProcedureCall extends Command {
-
+public class UnaryExpressionFunction extends UnaryExpression{
 	private Identifier identifier;
 	private ArrayList<Expression> arguments;
 	
-	public ProcedureCall(Identifier identifier){
-		this(identifier, new ArrayList<Expression>());
-	}
-	
-	public ProcedureCall(Identifier identifier, ArrayList<Expression> arguments){
+	public UnaryExpressionFunction(Identifier identifier, ArrayList<Expression> arguments){
 		this.identifier = identifier;
 		this.arguments = arguments;
 	}
-	
+
+	@Override
+	public Object visit(Visitor visitor, Object obj) throws SemanticException {
+		return visitor.visitUnaryExpressionFunction(this, obj);
+	}
+
 	@Override
 	public String toString(int level) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Object visit(Visitor visitor, Object obj) throws SemanticException {
-		return visitor.visitFunctionCallCommand(this, obj);
-	}
-
+	
 	public Identifier getIdentifier() {
 		return identifier;
 	}

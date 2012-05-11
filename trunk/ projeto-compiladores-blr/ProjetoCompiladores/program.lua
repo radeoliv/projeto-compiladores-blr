@@ -12,7 +12,7 @@ d = (3*a)
 e = d/a
 f = e
 g = 1.5
-h = soma (c,d)
+h = soma(c,d)
 
 
 # Teste de funcao sem parametro e sem retorno

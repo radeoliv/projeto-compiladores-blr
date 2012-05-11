@@ -1,7 +1,5 @@
 package classes.program;
 
-import java.util.ArrayList;
-
 import util.AST.AST;
 import checker.SemanticException;
 import checker.Visitor;
