@@ -11,7 +11,6 @@ public class Root extends AST{
 	
 	private ArrayList<Program> programs;
 	
-	
 	public Root(ArrayList<Program> programs){
 		this.programs = programs;
 	}

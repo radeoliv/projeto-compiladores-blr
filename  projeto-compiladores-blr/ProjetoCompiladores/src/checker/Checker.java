@@ -23,23 +23,25 @@ public class Checker implements Visitor{
 		identificationTable = new IdentificationTable();
 	}
 	
-	//'main'
 	public void check(AST a) throws SemanticException{
 		a.visit(this, null);
 	}
 	
-	//OK!
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand,Object obj) throws SemanticException {
 		Identifier id = assignmentCommand.getId();
 		AST a = identificationTable.retrieve(id.getSpelling());
+		
 		if(a == null){
+			//Primeiro uso
 			identificationTable.enter(id.getSpelling(), assignmentCommand);
 			id.visit(this, obj);
 			a = identificationTable.retrieve(id.getSpelling());
 		} else {
+			//Atribuição para variável já existente
 			id.visit(this, obj);
 		}
 		
+		//Verificação se o identificador é uma função
 		if(a instanceof FunctionDeclaration){
 			throw new SemanticException("Não é possível atribuir valor a uma função!");
 		}
@@ -61,7 +63,6 @@ public class Checker implements Visitor{
 		return null;
 	}
 
-	//OK!
 	public Object visitBinaryExpression(BinaryExpression binaryExpression, Object obj) throws SemanticException {
 		String leftExpType = (String)binaryExpression.getLeftExpression().visit(this, obj);
 		String rightExpType = (String)binaryExpression.getRightExpression().visit(this, obj);
@@ -93,11 +94,10 @@ public class Checker implements Visitor{
 	}
 
 	public Object visitBreakCommand(BreakCommand breakCommand, Object obj) {
-		// TODO Auto-generated method stub
+		// TODO
 		return null;
 	}
 
-	//OK!
 	public Object visitFunctionCallCommand(ProcedureCall functionCallCommand, Object obj) throws SemanticException {
 		visitIdentifier(functionCallCommand.getIdentifier(), obj);
 		
@@ -110,7 +110,6 @@ public class Checker implements Visitor{
 		return null;
 	}
 
-	//SEMI OK!
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException {
 		Identifier fdId = functionDeclaration.getIdentifier();
 
@@ -149,21 +148,18 @@ public class Checker implements Visitor{
 	}
 
 	public Object visitIfCommand(IfCommand ifCommand, Object obj) {
-		// TODO Auto-generated method stub
+		// TODO
 		return null;
 	}
 
-	//OK!
 	public Object visitNumber(Number number, Object obj) {
 		return number.getKind();
 	}
 
-	//OK!
 	public Object visitOperator(Operator operator, Object obj) {
 		return operator.getKind();
 	}
 
-	//OK!
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException {
 		if(printCommand.getE() != null)
 			printCommand.getE().visit(this, obj);
@@ -171,13 +167,10 @@ public class Checker implements Visitor{
 	}
 
 	public Object visitReturnCommand(ReturnCommand returnCommand, Object obj) {
-		// TODO Auto-generated method stub
-		
-		//return sempre vai ser último comando da função
+		// TODO
 		return null;
 	}
 
-	//OK!
 	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) throws SemanticException {
 		unaryExpressionId.getIdentifier().visit(this, obj);
 		String idType = ((AssignmentCommand)unaryExpressionId.getIdentifier().getDeclaration()).getType();
@@ -185,7 +178,6 @@ public class Checker implements Visitor{
 		return idType;
 	}
 
-	//OK!
 	public Object visitUnaryExpressionNumber(UnaryExpressionNumber unaryExpressionNumber, Object obj) {
 		unaryExpressionNumber.getNumber().visit(this, obj);
 		String numberType = unaryExpressionNumber.getNumber().getKind() + "";
@@ -193,20 +185,20 @@ public class Checker implements Visitor{
 		return numberType;
 	}
 
+	@Override
+	public Object visitUnaryExpressionFunction(UnaryExpressionFunction unaryExpressionFunction, Object obj) {
+		//TODO
+		return null;
+	}
+
 	public Object visitWhileCommand(WhileCommand whileCommand, Object obj) {
-		// TODO Auto-generated method stub
+		// TODO
 		return null;
 	}
 	
 	
 	public Object visitProgram(Program program, Object obj) throws SemanticException {
-		// :TODO
-		/*for(FunctionDeclaration fd : program.getFunctions()){
-			fd.visit(this, obj);
-		}
-		for(Command cmd : program.getCommands()){
-			cmd.visit(this, obj);
-		}*/
+		// TODO
 		return null;
 	}
 	
@@ -215,11 +207,6 @@ public class Checker implements Visitor{
 		return null;
 	}
 
-	@Override
-	public Object visitUnaryExpressionFunction(UnaryExpressionFunction unaryExpressionFunction, Object obj) {
-		//TODO
-		return null;
-	}
 	
 	
 }
