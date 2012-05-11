@@ -35,7 +35,7 @@ public class Checker implements Visitor{
 		AST a = identificationTable.retrieve(id.getSpelling());
 		
 		if(a == null){
-			//Primeiro uso
+			//Primeiro uso do identificador
 			identificationTable.enter(id.getSpelling(), assignmentCommand);
 			id.visit(this, obj);
 			a = identificationTable.retrieve(id.getSpelling());
@@ -50,6 +50,9 @@ public class Checker implements Visitor{
 		}
 		
 		assignmentCommand.getExpression().visit(this, obj);
+		
+		// :TODO Isso que tá no comentário abaixo só pode ocorrer se eu declarar como null.
+		// Pq em Lua não dá pra declarar sem um tipo ao lado do = Ou seja, tá estranho
 		
 		//Caso o identificador nunca tenha sido usado -> "Declaração"
 		AssignmentCommand aux = ((AssignmentCommand)a);
