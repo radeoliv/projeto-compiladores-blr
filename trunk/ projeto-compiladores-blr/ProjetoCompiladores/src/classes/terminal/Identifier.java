@@ -26,8 +26,8 @@ public class Identifier extends Terminal {
 		return visitor.visitIdentifier(this, obj);
 	}
 	
-	public Token getToken(){
-		return super.token;
+	public int getKind(){
+		return super.token.getKind();
 	}
 	
 	// GET SET

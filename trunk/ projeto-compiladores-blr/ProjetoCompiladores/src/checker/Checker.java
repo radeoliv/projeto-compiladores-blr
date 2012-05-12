@@ -206,7 +206,7 @@ public class Checker implements Visitor{
 	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) throws SemanticException {
 		unaryExpressionId.getIdentifier().visit(this, obj);
 		// @Nuno: Troquei porque não podia fazer cast para ASG Command
-		String idType = unaryExpressionId.getIdentifier().getToken().getKind() + ""; 
+		String idType = unaryExpressionId.getIdentifier().getKind() + ""; 
 		unaryExpressionId.setType(idType);
 		return idType;
 	}
