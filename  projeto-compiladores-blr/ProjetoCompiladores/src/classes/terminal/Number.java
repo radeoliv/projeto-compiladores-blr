@@ -5,8 +5,6 @@ import scanner.Token;
 
 public class Number extends Terminal {
 	
-	public int larissa;
-	
 	public Number(Token token){
 		super.token = token;
 	}

@@ -11,9 +11,9 @@ public class AssignmentCommand extends Command {
 	private Expression expression;
 	private String type;
 	
-	public AssignmentCommand(Identifier id, Expression e){
+	public AssignmentCommand(Identifier id, Expression expression){
 		this.id = id;
-		this.expression = e;
+		this.expression = expression;
 	}
 	
 	@Override
