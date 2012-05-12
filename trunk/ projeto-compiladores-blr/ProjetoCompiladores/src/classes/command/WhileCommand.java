@@ -11,7 +11,7 @@ public class WhileCommand extends Command {
 	private Expression expression;
 	private ArrayList<Command> commands;
 	
-	public WhileCommand(Expression e, ArrayList<Command> commands){
+	public WhileCommand(Expression expression, ArrayList<Command> commands){
 		this.expression = expression;
 		this.commands = commands;
 	}
@@ -27,7 +27,6 @@ public class WhileCommand extends Command {
 		return visitor.visitWhileCommand(this, obj);
 	}
 
-	
 	public Expression getExpression() {
 		return expression;
 	}

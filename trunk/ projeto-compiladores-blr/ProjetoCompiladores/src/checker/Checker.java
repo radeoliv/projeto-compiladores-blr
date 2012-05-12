@@ -239,8 +239,8 @@ public class Checker implements Visitor{
 	// OK! REVISAR
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException {
 		// Verifica se a expressão é null
-		if(printCommand.getE() != null)
-			printCommand.getE().visit(this, obj);
+		if(printCommand.getExpression() != null)
+			printCommand.getExpression().visit(this, obj);
 		return null;
 	}
 	

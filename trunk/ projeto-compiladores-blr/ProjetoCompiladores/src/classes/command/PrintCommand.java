@@ -6,12 +6,11 @@ import classes.expression.Expression;
 
 public class PrintCommand extends Command {
 
-	private Expression e;
+	private Expression expression;
 	
-	public PrintCommand(Expression e){
-		this.e = e;
+	public PrintCommand(Expression expression){
+		this.expression = expression;
 	}
-	
 	
 	@Override
 	public String toString(int level) {
@@ -24,13 +23,12 @@ public class PrintCommand extends Command {
 		return visitor.visitPrintCommand(this, obj);
 	}
 
-
-	public Expression getE() {
-		return e;
+	public Expression getExpression() {
+		return expression;
 	}
 
-	public void setE(Expression e) {
-		this.e = e;
+	public void setE(Expression expression) {
+		this.expression = expression;
 	}	
 
 }
