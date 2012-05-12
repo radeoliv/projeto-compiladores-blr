@@ -1,7 +1,10 @@
 #-----------------------------------------------------------
-# Checker - Teste 18
-# Wrong
+# Checker
+# Right
 #-----------------------------------------------------------
 
 
-# R16 - numero de argumentos na chamada de funcaoo igual ao numero de parametros da funcao
+# R1 - case sensitive
+
+a = 1
+A = 2

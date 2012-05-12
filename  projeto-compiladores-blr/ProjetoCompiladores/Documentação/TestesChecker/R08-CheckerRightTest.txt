@@ -1,0 +1,17 @@
+#-----------------------------------------------------------
+# Checker
+# Right
+#-----------------------------------------------------------
+
+
+# R8 - operadores aditivos e multiplicativos retornam o tipo do operandos
+
+a = 2+3
+b = 3-2
+c = 2.4*3.1
+d = 3.0/1.5
+
+testea = a+1
+testeb = b+1
+testec = c+1.1
+tested = d+1.2

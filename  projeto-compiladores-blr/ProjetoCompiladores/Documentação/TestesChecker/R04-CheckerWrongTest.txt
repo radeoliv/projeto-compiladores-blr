@@ -1,7 +1,10 @@
 #-----------------------------------------------------------
-# Checker - Teste 04
+# Checker
 # Wrong
 #-----------------------------------------------------------
 
 
-# R2 - Declaracao de variavel
+# R4 - Mudanca de tipo de variavel
+
+a = 2
+a = 1.2

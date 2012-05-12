@@ -1,7 +1,14 @@
 #-----------------------------------------------------------
-# Checker - Teste 17
+# Checker
 # Wrong
 #-----------------------------------------------------------
 
 
-# R15 - procedimento deve ser declarado anteriormente para ser chamada
+# R16 - Break so dentro de while.
+
+while (1) do
+	print (1)
+end
+
+break
+

@@ -1,0 +1,11 @@
+#-----------------------------------------------------------
+# Checker
+# Right
+#-----------------------------------------------------------
+
+
+# R2 - a primeira atribuicaoo de um identificador sera sua declaracao. Os demais aparecimentos sao atribuicoes.
+
+a = 2
+a = 5
+a = 6

@@ -1,7 +1,10 @@
 #-----------------------------------------------------------
-# Checker - Teste 05
+# Checker
 # Wrong
 #-----------------------------------------------------------
 
 
-# R3 - A = B onde A deve ser variavel
+# R5 - operadores aplicados a operandos do mesmo tipo
+
+a = 2+3
+b = 1.2+a

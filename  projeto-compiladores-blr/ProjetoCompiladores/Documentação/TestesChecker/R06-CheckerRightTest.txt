@@ -1,7 +1,11 @@
 #-----------------------------------------------------------
-# Checker - Teste 16
-# Wrong
+# Checker
+# Right
 #-----------------------------------------------------------
 
 
-# R14 - funcao deve ser declarada anteriormente para ser chamada
+# R6 - operadores devem ser aplicados a int ou float
+
+a = 2<=2
+b = 4.2==4.3
+
