@@ -12,6 +12,7 @@ public class Identifier extends Terminal {
 	
 	public Identifier(Token token){
 		super.token = token;
+		spelling = token.getSpelling();
 	}
 
 	@Override

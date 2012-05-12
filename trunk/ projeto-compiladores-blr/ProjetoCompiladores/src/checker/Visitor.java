@@ -4,7 +4,6 @@ import classes.command.AssignmentCommand;
 import classes.command.BreakCommand;
 import classes.command.IfCommand;
 import classes.command.PrintCommand;
-import classes.command.ReturnCommand;
 import classes.command.WhileCommand;
 import classes.expression.BinaryExpression;
 import classes.expression.UnaryExpressionFunction;
@@ -26,7 +25,6 @@ public interface Visitor {
 	public Object visitProcedureCall(ProcedureCall procedureCall, Object obj) throws SemanticException;
 	public Object visitIfCommand(IfCommand ifCommand, Object obj) throws SemanticException;
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException;
-	public Object visitReturnCommand(ReturnCommand returnCommand, Object obj) throws SemanticException;
 	public Object visitWhileCommand(WhileCommand whileCommand, Object obj) throws SemanticException;
 	
 	// Expression
