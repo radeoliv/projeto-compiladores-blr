@@ -1,0 +1,7 @@
+#-----------------------------------------------------------
+# Checker - Teste 11
+# Wrong
+#-----------------------------------------------------------
+
+
+# R9 - operadores aditivos e multiplicativos retornam o tipo do operandos
