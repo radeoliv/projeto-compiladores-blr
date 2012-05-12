@@ -2,11 +2,9 @@ package util.symbolsTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Set;
 
 import parser.GrammarSymbols;
-
 import util.AST.AST;
 import checker.SemanticException;
 
@@ -43,6 +41,8 @@ public class IdentificationTable {
 		this.table.put(new Key(0, "break"), null);	
 		this.table.put(new Key(0, "print"), null);
 		this.table.put(new Key(0, "call"), null);
+		this.table.put(new Key(0, "int"), null);
+		this.table.put(new Key(0, "float"), null);
 		
 		// Initializes currentScope to 0 (global)
 		this.currentScope = 0;
@@ -165,6 +165,10 @@ public class IdentificationTable {
 			value = GrammarSymbols.PRINT;
 		} else if (string.equals("call")){
 			value = GrammarSymbols.CALL;
+		} else if (string.equals("int")){
+			value = GrammarSymbols.INT;
+		} else if (string.equals("float")){
+			value = GrammarSymbols.FLOAT;
 		}
 		return value;
 	}

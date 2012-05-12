@@ -10,6 +10,7 @@ import classes.expression.UnaryExpressionFunction;
 import classes.expression.UnaryExpressionId;
 import classes.expression.UnaryExpressionNumber;
 import classes.functionDeclaration.FunctionDeclaration;
+import classes.functionDeclaration.Parameter;
 import classes.procedureCall.ProcedureCall;
 import classes.program.Program;
 import classes.root.Root;
@@ -35,6 +36,7 @@ public interface Visitor {
 	
 	// Function Declaration
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException;
+	public Object visitParameter(Parameter parameter, Object obj) throws SemanticException;
 	
 	// Program
 	public Object visitProgram(Program program, Object obj) throws SemanticException;
