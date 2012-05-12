@@ -283,7 +283,15 @@ public class Parser {
 		Expression leftE = parseAdditiveExpression();
 		Operator op = null;
 		Expression rightE = null;
-		BinaryExpression binaryE = new BinaryExpression(leftE, op, rightE);
+		//BinaryExpression binaryE = new BinaryExpression(leftE, op, rightE);
+		
+		UnaryExpression unaryE = null;
+		BinaryExpression binaryE = null;
+		
+		if(leftE instanceof UnaryExpression)
+			unaryE = (UnaryExpression)leftE;
+		else
+			binaryE = (BinaryExpression)leftE;
 		
 		while (currentToken.getKind() == GrammarSymbols.RELATIONAL_OPERATOR){
 			op = new Operator(currentToken);
@@ -292,8 +300,15 @@ public class Parser {
 			binaryE = new BinaryExpression(leftE, op, rightE);
 			leftE = binaryE;
 		}
-
-		return binaryE;
+		
+		Expression e;
+		if(binaryE != null){
+			e = binaryE;
+		} else {
+			e = unaryE;
+		}
+		
+		return e;
 	}
 	
 	private Expression parseAdditiveExpression () throws LexicalException, SyntacticException{
@@ -302,7 +317,15 @@ public class Parser {
 		Expression leftE = parseMultiplicativeExpression ();
 		Operator op = null;
 		Expression rightE = null;
-		BinaryExpression binaryE = new BinaryExpression(leftE, op, rightE);
+		
+		//BinaryExpression binaryE = new BinaryExpression(leftE, op, rightE);
+		UnaryExpression unaryE = null;
+		BinaryExpression binaryE = null;
+		
+		if(leftE instanceof UnaryExpression)
+			unaryE = (UnaryExpression)leftE;
+		else
+			binaryE = (BinaryExpression)leftE;
 		
 		while (currentToken.getKind() == GrammarSymbols.ADDITIVE_OPERATOR){
 			op = new Operator(currentToken);
@@ -312,7 +335,15 @@ public class Parser {
 			leftE = binaryE;
 		}
 
-		return binaryE;
+		Expression e;
+		if(binaryE != null){
+			e = binaryE;
+		} else {
+			e = unaryE;
+		}
+		
+		return e;
+			
 	}
 	
 	private Expression parseMultiplicativeExpression () throws LexicalException, SyntacticException{
@@ -321,7 +352,15 @@ public class Parser {
 		Expression leftE = parseBaseExpression();
 		Operator op = null;
 		Expression rightE = null;
-		BinaryExpression binaryE = new BinaryExpression(leftE, op, rightE);
+
+		//BinaryExpression binaryE = new BinaryExpression(leftE, op, rightE);
+		UnaryExpression unaryE = null;
+		BinaryExpression binaryE = null;
+		
+		if(leftE instanceof UnaryExpression)
+			unaryE = (UnaryExpression)leftE;
+		else
+			binaryE = (BinaryExpression)leftE;
 		
 		while (currentToken.getKind() == GrammarSymbols.MULTIPLICATIVE_OPERATOR){
 			op = new Operator(currentToken);
@@ -331,7 +370,14 @@ public class Parser {
 			leftE = binaryE;
 		}
 		
-		return binaryE;
+		Expression e;
+		if(binaryE != null){
+			e = binaryE;
+		} else {
+			e = unaryE;
+		}
+		
+		return e;
 	}
 	
 	private Expression parseBaseExpression () throws LexicalException, SyntacticException{

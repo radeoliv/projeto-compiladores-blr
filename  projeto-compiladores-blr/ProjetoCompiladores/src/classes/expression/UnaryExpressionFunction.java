@@ -9,7 +9,6 @@ import classes.terminal.Identifier;
 public class UnaryExpressionFunction extends UnaryExpression{
 	private Identifier identifier;
 	private ArrayList<Expression> arguments;
-	private String type;
 	
 	public UnaryExpressionFunction(Identifier identifier){
 		this(identifier, new ArrayList<Expression>());
@@ -45,13 +44,5 @@ public class UnaryExpressionFunction extends UnaryExpression{
 
 	public void setArguments(ArrayList<Expression> arguments) {
 		this.arguments = arguments;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 }
