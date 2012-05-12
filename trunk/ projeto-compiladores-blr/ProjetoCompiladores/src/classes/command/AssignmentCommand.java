@@ -13,7 +13,7 @@ public class AssignmentCommand extends Command {
 	
 	public AssignmentCommand(Identifier id, Expression e){
 		this.id = id;
-		this.expression = expression;
+		this.expression = e;
 	}
 	
 	@Override
