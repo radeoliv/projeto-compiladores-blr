@@ -1,0 +1,7 @@
+#-----------------------------------------------------------
+# Checker - Teste 17
+# Wrong
+#-----------------------------------------------------------
+
+
+# R15 - procedimento deve ser declarado anteriormente para ser chamada

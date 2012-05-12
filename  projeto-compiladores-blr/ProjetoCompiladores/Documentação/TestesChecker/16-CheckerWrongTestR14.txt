@@ -1,0 +1,7 @@
+#-----------------------------------------------------------
+# Checker - Teste 16
+# Wrong
+#-----------------------------------------------------------
+
+
+# R14 - funcao deve ser declarada anteriormente para ser chamada

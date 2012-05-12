@@ -1,0 +1,7 @@
+#-----------------------------------------------------------
+# Checker - Teste 18
+# Wrong
+#-----------------------------------------------------------
+
+
+# R16 - numero de argumentos na chamada de funcaoo igual ao numero de parametros da funcao
