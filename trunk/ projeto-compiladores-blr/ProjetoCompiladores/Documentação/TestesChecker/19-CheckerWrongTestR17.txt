@@ -1,7 +1,0 @@
-#-----------------------------------------------------------
-# Checker - Teste 19
-# Wrong
-#-----------------------------------------------------------
-
-
-# R17 - numero de argumentos na chamada de procedimento igual ao número de parametros da funcaoo

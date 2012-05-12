@@ -1,0 +1,13 @@
+#-----------------------------------------------------------
+# Checker
+# Wrong
+#-----------------------------------------------------------
+
+
+# R9 - nao pode existir funcao com mesmo spelling
+
+function a () return 1 end
+
+function b (x, y) return y end
+
+function a (x) return x end

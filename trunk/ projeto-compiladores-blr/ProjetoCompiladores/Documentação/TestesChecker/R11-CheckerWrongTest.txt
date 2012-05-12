@@ -1,7 +1,9 @@
 #-----------------------------------------------------------
-# Checker - Teste 08
+# Checker
 # Wrong
 #-----------------------------------------------------------
 
 
-# R6 - operadores aplicados a operandos do mesmo tipo
+# R11 - funcao so pode ser chamada se tiver sido declarada
+
+a = funcao (x)

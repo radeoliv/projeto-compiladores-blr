@@ -1,7 +1,9 @@
 #-----------------------------------------------------------
-# Checker - Teste 13
+# Checker
 # Wrong
 #-----------------------------------------------------------
 
 
-# R11 - return so pode aparecer dentro de escopo de funcao
+# R12 - procedimento so pode ser chamado se tiver sido declarado
+
+call a(x)

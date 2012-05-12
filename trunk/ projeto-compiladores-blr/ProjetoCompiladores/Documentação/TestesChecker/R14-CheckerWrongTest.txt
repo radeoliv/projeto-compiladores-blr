@@ -1,0 +1,10 @@
+#-----------------------------------------------------------
+# Checker
+# Wrong
+#-----------------------------------------------------------
+
+
+# R14 - numero de argumentos na chamada de funcao deve ser igual ao numero de parametros da funcao
+
+function a (x,y,z) return x end
+teste = a (1,2)

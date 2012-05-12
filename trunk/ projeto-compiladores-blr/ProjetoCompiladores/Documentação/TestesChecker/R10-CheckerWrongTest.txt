@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# Checker
+# Wrong
+#-----------------------------------------------------------
+
+
+# R10 - nao pode existir procedimento com mesmo spelling
+
+
+function a () end
+
+function b (x, y) end
+
+function a (x) end

@@ -1,7 +1,10 @@
 #-----------------------------------------------------------
-# Checker - Teste 06
+# Checker
 # Wrong
 #-----------------------------------------------------------
 
 
-# R4 - A = B onde tipo de A deve ser igual tipo de B
+# R3 - A = B onde A deve ser variavel
+
+function a () return 1 end
+a = 3

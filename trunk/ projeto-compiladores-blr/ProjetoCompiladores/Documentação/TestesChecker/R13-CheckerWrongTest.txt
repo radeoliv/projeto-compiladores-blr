@@ -1,0 +1,10 @@
+#-----------------------------------------------------------
+# Checker
+# Wrong
+#-----------------------------------------------------------
+
+
+# R13 - numero de argumentos na chamada de procedimento deve ser igual ao numero de parametros da funcao
+
+function a (x,y,z) end
+call a (1,2)

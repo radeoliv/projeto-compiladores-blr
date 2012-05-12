@@ -1,7 +1,11 @@
 #-----------------------------------------------------------
-# Checker - Teste 12
+# Checker
 # Wrong
 #-----------------------------------------------------------
 
 
-# R10 - nao pode existir funcao com mesmo spelling
+# R15 - Toda expressao condicional deve ser do tipo inteiro. (condicao do if e while)
+
+while (1+2) do
+	print (1)
+end

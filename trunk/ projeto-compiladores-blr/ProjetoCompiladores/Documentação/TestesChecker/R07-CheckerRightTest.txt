@@ -1,7 +1,13 @@
 #-----------------------------------------------------------
-# Checker - Teste 20
-# Wrong
+# Checker
+# Right
 #-----------------------------------------------------------
 
 
-# R18 - expressao condicional do if precisa ser inteiro
+# R7 - operadores relacionais retornam int
+
+a = (2<=2)
+b = (4.2==4.3)
+
+testea = (a+1)
+testeb = (b+1)
