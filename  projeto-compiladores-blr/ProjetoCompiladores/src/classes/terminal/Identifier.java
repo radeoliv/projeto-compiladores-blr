@@ -26,10 +26,6 @@ public class Identifier extends Terminal {
 		return visitor.visitIdentifier(this, obj);
 	}
 	
-	public int getKind(){
-		return super.token.getKind();
-	}
-	
 	// GET SET
 	public String getSpelling() {
 		return spelling;

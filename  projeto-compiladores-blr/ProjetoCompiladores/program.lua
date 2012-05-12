@@ -1,22 +1,20 @@
-function soma (a, b)
+function soma (int a, int b)
 	soma1 = 1
-	while (b>0) do
-		if (b==1) then
-			soma1 = (a+b)
+	c = 2
+	while (soma1>0) do
+		if (soma1==1) then
+			soma1 = (2+3)
 			break
-		else soma1 = b
+		else soma1 = c
 		end		
-		b=b-1
+		c=c-1
 	end
 	return soma1
 end
 
-# Chamada de funcao sem parametro e com retorno
-i = nada ()
-
 # Chamada de funcao com parametro e com retorno
-j = soma (1, 2)
-
+j = soma (1,2)
+x = 4.5
 a = 1
 g = 3
 # Teste de: while, if, else, break e return

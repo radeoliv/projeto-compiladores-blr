@@ -9,7 +9,6 @@ public class BinaryExpression extends Expression {
 	private Expression leftExpression;
 	private Operator operator;
 	private Expression rightExpression;
-	private String type;
 	
 	public BinaryExpression(Expression leftExpression, Operator operator, Expression rightExpression){
 		this.leftExpression = leftExpression;
@@ -51,13 +50,4 @@ public class BinaryExpression extends Expression {
 	public void setRightExpression(Expression rightExpression) {
 		this.rightExpression = rightExpression;
 	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 }

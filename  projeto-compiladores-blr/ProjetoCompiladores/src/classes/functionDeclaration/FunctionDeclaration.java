@@ -11,11 +11,11 @@ import classes.terminal.Identifier;
 public class FunctionDeclaration extends AST {
 
 	private Identifier identifier;
-	private ArrayList<Identifier> parameters;
+	private ArrayList<Parameter> parameters;
 	private ArrayList<Command> commands;
 	private Expression returnExp;
 	
-	public FunctionDeclaration(Identifier identifier, ArrayList<Identifier> parameters, ArrayList<Command> commands, Expression returnExp){
+	public FunctionDeclaration(Identifier identifier, ArrayList<Parameter> parameters, ArrayList<Command> commands, Expression returnExp){
 		this.identifier = identifier;
 		this.parameters = parameters;
 		this.commands = commands;
@@ -41,11 +41,11 @@ public class FunctionDeclaration extends AST {
 		this.identifier = identifier;
 	}
 	
-	public ArrayList<Identifier> getParameters() {
+	public ArrayList<Parameter> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(ArrayList<Identifier> parameters) {
+	public void setParameters(ArrayList<Parameter> parameters) {
 		this.parameters = parameters;
 	}
 

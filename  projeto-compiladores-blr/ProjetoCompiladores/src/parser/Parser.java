@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import classes.command.*;
 import classes.expression.*;
 import classes.functionDeclaration.FunctionDeclaration;
+import classes.functionDeclaration.Parameter;
 import classes.procedureCall.ProcedureCall;
 import classes.program.Program;
 import classes.root.Root;
@@ -173,6 +174,7 @@ public class Parser {
 	
 	private FunctionDeclaration parseFunctionDeclaration() throws LexicalException, SyntacticException{
 		//functionDeclaration ::= function identifier ( (parameters)? ) (command)* (return expression)? end
+
 		Identifier id = null;
 		accept(GrammarSymbols.FUNCTION);
 		if(currentToken.getKind() == GrammarSymbols.ID){
@@ -183,12 +185,12 @@ public class Parser {
 		}
 		accept(GrammarSymbols.LEFT_PARENTHESIS);
 		
-		ArrayList<Identifier> parameters = new ArrayList<Identifier>();
+		ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 		ArrayList<Command> commands = new ArrayList<Command>();
 		Expression returnExp = null;
 		
 		if(currentToken.getKind() != GrammarSymbols.RIGHT_PARENTHESIS){
-			parameters = parseParameters();
+			parameters = parseParameters(); 
 		}
 		accept(GrammarSymbols.RIGHT_PARENTHESIS);
 		
@@ -207,19 +209,41 @@ public class Parser {
 		return fd;
 	}
 	
-	private ArrayList<Identifier> parseParameters() throws LexicalException, SyntacticException{
-		// parameters ::= identifier ( , identifier)*
+	private ArrayList<Parameter> parseParameters() throws LexicalException, SyntacticException{
+		// parameters ::= parameter ( , parameter)*
 		
-		ArrayList<Identifier> identifiers = new ArrayList<Identifier>();
+		ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+		int parameterType = -1;
+
+		if(currentToken.getKind() == GrammarSymbols.INT){
+			parameterType = GrammarSymbols.INT;
+			acceptIt();
+		} else if(currentToken.getKind() == GrammarSymbols.FLOAT){
+			parameterType = GrammarSymbols.FLOAT;
+			acceptIt();
+		} else {
+			throw new SyntacticException("'int' or 'float' type definition expected!", currentToken);
+		}
 		
 		if(currentToken.getKind() == GrammarSymbols.ID){
-			identifiers.add(new Identifier(currentToken));
+			parameters.add(new Parameter(new Identifier(currentToken), parameterType));
 			acceptIt();
-			
+
 			while (currentToken.getKind() == GrammarSymbols.COMMA){
 				acceptIt();
+				
+				if(currentToken.getKind() == GrammarSymbols.INT){
+					parameterType = GrammarSymbols.INT;
+					acceptIt();
+				} else if(currentToken.getKind() == GrammarSymbols.FLOAT){
+					parameterType = GrammarSymbols.FLOAT;
+					acceptIt();
+				} else {
+					throw new SyntacticException("'int' or 'float' type definition expected!", currentToken);
+				}
+				
 				if(currentToken.getKind() == GrammarSymbols.ID){
-					identifiers.add(new Identifier(currentToken));
+					parameters.add(new Parameter(new Identifier(currentToken), parameterType));
 					acceptIt();
 				} else {
 					throw new SyntacticException("Not expected token!", currentToken);
@@ -230,7 +254,7 @@ public class Parser {
 			throw new SyntacticException("Not expected token!", currentToken);
 		}
 
-		return identifiers;
+		return parameters;
 	}
 	
 	private ProcedureCall parseProcedureCall() throws LexicalException, SyntacticException{
@@ -393,6 +417,7 @@ public class Parser {
 		}else if (currentToken.getKind() == GrammarSymbols.INT || currentToken.getKind() == GrammarSymbols.FLOAT){
 			Number n = new Number(currentToken);
 			e = new UnaryExpressionNumber(n);
+			e.setType(currentToken.getKind()+"");
 			acceptIt();
 			
 		}else if(currentToken.getKind() == GrammarSymbols.ID){
