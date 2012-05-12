@@ -32,18 +32,19 @@ public class Checker implements Visitor{
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand,Object obj) throws SemanticException {
 		Identifier id = assignmentCommand.getId();
 		AST a = identificationTable.retrieve(id.getSpelling());
-		assignmentCommand.getExpression().visit(this, obj);
+		String assignmentType = (String)assignmentCommand.getExpression().visit(this, obj);
 		
 		//TODO: Como gerenciar referencias de declarações para mesmo identificador?
 		
 		if(a == null){
 			//Primeiro uso do identificador
-			assignmentCommand.setType(assignmentCommand.getExpression().getType());
+			assignmentCommand.setType(assignmentType);
 			identificationTable.enter(id.getSpelling(), assignmentCommand);
 			id.visit(this, obj);
 			a = identificationTable.retrieve(id.getSpelling());
 		} else {
 			//Atribuição para variável já existente
+			assignmentCommand.setType(assignmentType);
 			id.visit(this, obj);
 		}
 		
@@ -54,7 +55,7 @@ public class Checker implements Visitor{
 		}
 		
 		String idType = ((AssignmentCommand)a).getType();
-		String expType = assignmentCommand.getExpression().getType();
+		String expType = assignmentType;
 		
 		if(!idType.equals(expType)){
 			throw new SemanticException("Types do not match!");
@@ -126,8 +127,8 @@ public class Checker implements Visitor{
 			identificationTable.openScope();
 			
 			//Visitando parâmetros
-			for(Identifier parameter : functionDeclaration.getParameters()){
-				identificationTable.enter(parameter.getSpelling(), functionDeclaration);
+			for(Parameter parameter : functionDeclaration.getParameters()){
+				identificationTable.enter(parameter.getIdentifier().getSpelling(), functionDeclaration);
 				parameter.visit(this, obj);
 			}
 			
@@ -173,16 +174,12 @@ public class Checker implements Visitor{
 		for(Command ifCmd : ifCommand.getIfCommands()){
 			ifCmd.visit(this, obj);
 		}
+		identificationTable.closeScope();
 		
-		ArrayList<Command> elseCmds = ifCommand.getElseCommands();
-		if(elseCmds.size() > 0){
-			identificationTable.openScope();
-			for(Command elseCmd : elseCmds){
-				elseCmd.visit(this, obj);
-			}
-			identificationTable.closeScope();
+		identificationTable.openScope();
+		for(Command elseCmd : ifCommand.getElseCommands()){
+			elseCmd.visit(this, obj);
 		}
-		
 		identificationTable.closeScope();
 		
 		return null;
@@ -198,16 +195,36 @@ public class Checker implements Visitor{
 	
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException {
 		// Verifica se a expressão é null pois o comando print pode ou não possuir uma expressão associada
+		String expReturn = null;
 		if(printCommand.getExpression() != null)
-			printCommand.getExpression().visit(this, obj);
-		return null;
+			expReturn = (String)printCommand.getExpression().visit(this, obj);
+		return expReturn;
 	}
 	
 	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) throws SemanticException {
 		unaryExpressionId.getIdentifier().visit(this, obj);
-		// @Nuno: Troquei porque não podia fazer cast para ASG Command
-		String idType = unaryExpressionId.getIdentifier().getKind() + ""; 
-		unaryExpressionId.setType(idType);
+		
+		AST a = unaryExpressionId.getIdentifier().getDeclaration();
+		String idType = null;
+		
+		if(a instanceof AssignmentCommand){
+			idType = ((AssignmentCommand)a).getType();
+			unaryExpressionId.setType(idType);
+		} else if(a instanceof FunctionDeclaration) {
+
+			ArrayList<Parameter> parameters = ((FunctionDeclaration)a).getParameters();
+			for(Parameter parameter : parameters){
+				if(parameter.getIdentifier().getSpelling().equals( unaryExpressionId.getIdentifier().getSpelling() )){
+					idType = parameter.getIdentifierType() + "";
+					break;
+				}
+			}
+			if(idType.equals(null)){
+				idType = ((FunctionDeclaration)a).getReturnExp().getType();
+			}
+			unaryExpressionId.setType(idType);
+		}
+		
 		return idType;
 	}
 	
@@ -220,6 +237,8 @@ public class Checker implements Visitor{
 	
 	public Object visitUnaryExpressionFunction(UnaryExpressionFunction unaryExpressionFunction, Object obj) throws SemanticException {
 		Identifier idU = unaryExpressionFunction.getIdentifier();
+		idU.visit(this, obj);
+		
 		AST a = identificationTable.retrieve(idU.getSpelling());
 		
 		if (a != null){
@@ -236,7 +255,7 @@ public class Checker implements Visitor{
 			throw new SemanticException ("Nonexistent function!");	
 		}
 		
-		return ((FunctionDeclaration)a).getReturnExp().getType();
+		return ((FunctionDeclaration)a).getReturnExp().visit(this, obj);
 	}
 	
 	public Object visitWhileCommand(WhileCommand whileCommand, Object obj) throws SemanticException {
@@ -279,6 +298,12 @@ public class Checker implements Visitor{
 			prg.visit(this, obj);
 		}
 		return null;
+	}
+
+	@Override
+	public Object visitParameter(Parameter parameter, Object obj) throws SemanticException {
+		parameter.getIdentifier().visit(this, obj);
+		return parameter.getIdentifierType();
 	}
 
 	
