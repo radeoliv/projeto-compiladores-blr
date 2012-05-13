@@ -4,8 +4,8 @@
 #-----------------------------------------------------------
 
 
-# R15 - Toda expressao condicional deve ser do tipo inteiro. (condicao do if e while)
+# R15 - Toda expressao de condicao deve ser do tipo inteiro. (condicao do if e while)
 
-while (1+2) do
+while (1.0) do
 	print (1)
 end

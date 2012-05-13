@@ -1,11 +1,12 @@
 #-----------------------------------------------------------
 # Checker
-# Right
+# Wrong
 #-----------------------------------------------------------
 
+# R18 - Nao e' possivel ter variavel e funcao de mesmo nome
 
-# R2 - a primeira atribuicaoo de um identificador sera sua declaracao. Os demais aparecimentos sao atribuicoes.
+y = 3
 
-a = 2
-a = 5
-a = 6
+function y (int a, int b)
+	x = 4
+end

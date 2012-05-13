@@ -6,4 +6,4 @@
 
 # R11 - funcao so pode ser chamada se tiver sido declarada
 
-a = funcao (x)
+a = funcao(x)

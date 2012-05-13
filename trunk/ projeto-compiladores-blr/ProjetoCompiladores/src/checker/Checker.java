@@ -34,8 +34,6 @@ public class Checker implements Visitor{
 		AST a = identificationTable.retrieve(id.getSpelling());
 		String assignmentType = (String)assignmentCommand.getExpression().visit(this, obj);
 		
-		//TODO: Como gerenciar referencias de declarações para mesmo identificador?
-		
 		if(a == null){
 			//Primeiro uso do identificador
 			assignmentCommand.setType(assignmentType);
@@ -49,9 +47,8 @@ public class Checker implements Visitor{
 		}
 		
 		//Verificação se o identificador é uma função
-		
 		if(a instanceof FunctionDeclaration){
-			throw new SemanticException("Is not possible to assign a value to a function!");
+			throw new SemanticException("Invalid assignment operation!");
 		}
 		
 		String idType = ((AssignmentCommand)a).getType();
@@ -97,7 +94,7 @@ public class Checker implements Visitor{
 		// É preciso verificar se o break está contido em um escopo de while. O objeto obj vai servir para trazer a informação, mostrando se o visit foi chamado por meio do while.
 		
 		if(obj == null || !(obj instanceof WhileCommand))
-			throw new SemanticException ("Break fora de While!");
+			throw new SemanticException ("Break out of While!");
 		return null;
 	}
 
@@ -162,7 +159,7 @@ public class Checker implements Visitor{
 			}
 
 		} else {
-			throw new SemanticException ("Already existent function!");
+			throw new SemanticException ("Already existent identifier!");
 		}
 		return null;
 	}
@@ -185,8 +182,8 @@ public class Checker implements Visitor{
 		 * Verifica expressão de condição no IF
 		 * 
 		 * Para ocorrer erro, vem:
-		 * 	- A expressão passada não seja uma expressão binária com um operador relacional
-		 * 	- A expressão não seja Unária tendo como tipo dela sendo inteiro
+		 * 	- A expressão passada não é uma expressão binária com um operador relacional
+		 * 	- A expressão não é Unária tendo 'inteiro' como tipo da mesma
 		 * 		
 		 */
 		if ( !((exp instanceof BinaryExpression && ((BinaryExpression) exp).getOperator().getKind() == GrammarSymbols.RELATIONAL_OPERATOR))
@@ -259,7 +256,7 @@ public class Checker implements Visitor{
 				idType = ((FunctionDeclaration)a).getReturnExp().getType();
 			}
 			
-			// seta o tipo 
+			// atribui o tipo 
 			unaryExpressionId.setType(idType);
 		}
 		
@@ -312,8 +309,8 @@ public class Checker implements Visitor{
 		 * Verifica expressão de condição no WHILE
 		 * 
 		 * Para ocorrer erro, vem:
-		 * 	- A expressão passada não seja uma expressão binária com um operador relacional
-		 * 	- A expressão não seja Unária tendo como tipo dela sendo inteiro
+		 * 	- A expressão passada não é uma expressão binária com um operador relacional
+		 * 	- A expressão não é Unária tendo 'inteiro' como tipo da mesma
 		 * 		
 		 */
 		if ( !((exp instanceof BinaryExpression && ((BinaryExpression) exp).getOperator().getKind() == GrammarSymbols.RELATIONAL_OPERATOR))
@@ -328,7 +325,6 @@ public class Checker implements Visitor{
 			cmd.visit(this, whileCommand);
 			
 			if (cmd instanceof BreakCommand){
-				//TODO: Verificar uso
 				break;
 			}
 		}
@@ -359,7 +355,4 @@ public class Checker implements Visitor{
 		parameter.getIdentifier().visit(this, obj);
 		return parameter.getIdentifierType();
 	}
-
-	
-	
 }

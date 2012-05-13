@@ -8,6 +8,6 @@
 
 function a () return 1 end
 
-function b (x, y) return y end
+function b (int x, int y) return y end
 
-function a (x) return x end
+function a (int x) return x end

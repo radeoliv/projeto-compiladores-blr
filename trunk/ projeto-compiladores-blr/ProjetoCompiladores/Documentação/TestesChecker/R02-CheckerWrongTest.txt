@@ -4,11 +4,7 @@
 #-----------------------------------------------------------
 
 
-# R10 - nao pode existir procedimento com mesmo spelling
+# R2 - Todos os identificadores precisam ter sido 'declarados' (algum valor/definicao) antes de serem utilizados.
 
-
-function a () end
-
-function b (int x, int y) end
-
-function a (int x) end
+a = 2
+a = b
