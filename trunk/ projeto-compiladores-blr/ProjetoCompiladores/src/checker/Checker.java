@@ -148,8 +148,17 @@ public class Checker implements Visitor{
 			
 			identificationTable.closeScope();
 			
+			/*
+			 * Adiciona o indentificador presente no retorno para a,
+			 * foi utilizado este artifício, pois o identificador era perdido
+			 * no fechamento do escopo.
+			 */
 			if(saveReturn){
-				identificationTable.enter( ((UnaryExpressionId)(functionDeclaration.getReturnExp())).getIdentifier().getSpelling(), functionDeclaration );
+				if (functionDeclaration.getReturnExp() instanceof UnaryExpressionId){
+					identificationTable.enter(
+							((UnaryExpressionId) (functionDeclaration.getReturnExp())).getIdentifier().getSpelling(), 
+								functionDeclaration);
+				}
 			}
 
 		} else {
@@ -169,10 +178,17 @@ public class Checker implements Visitor{
 	}
 
 	public Object visitIfCommand(IfCommand ifCommand, Object obj) throws SemanticException {
-		Expression exp = ifCommand.getExpression();		
+		Expression exp = ifCommand.getExpression();
 		exp.visit(this, obj);
 		
-		//Verificando se a condição do if é válida
+		/*
+		 * Verifica expressão de condição no IF
+		 * 
+		 * Para ocorrer erro, vem:
+		 * 	- A expressão passada não seja uma expressão binária com um operador relacional
+		 * 	- A expressão não seja Unária tendo como tipo dela sendo inteiro
+		 * 		
+		 */
 		if ( !((exp instanceof BinaryExpression && ((BinaryExpression) exp).getOperator().getKind() == GrammarSymbols.RELATIONAL_OPERATOR))
 				&& !((exp instanceof UnaryExpression && ((UnaryExpression) exp).getType().equals(GrammarSymbols.INT + "")))){
 			
@@ -203,7 +219,10 @@ public class Checker implements Visitor{
 	}
 	
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException {
-		// Verifica se a expressão é null pois o comando print pode ou não possuir uma expressão associada
+		/*
+		 * Verifica se a expressão é null pois o comando print 
+		 * pode ou não possuir uma expressão associada 
+		 */
 		String expReturn = null;
 		if(printCommand.getExpression() != null)
 			expReturn = (String)printCommand.getExpression().visit(this, obj);
@@ -213,24 +232,34 @@ public class Checker implements Visitor{
 	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId, Object obj) throws SemanticException {
 		unaryExpressionId.getIdentifier().visit(this, obj);
 		
+		// Verifica onde o identificador foi declarado
 		AST a = unaryExpressionId.getIdentifier().getDeclaration();
 		String idType = "";
 		
+		// Caso o declaration seja AssignmentCommand
 		if(a instanceof AssignmentCommand){
+			
 			idType = ((AssignmentCommand)a).getType();
 			unaryExpressionId.setType(idType);
-		} else if(a instanceof FunctionDeclaration) {
+			
+		} else if(a instanceof FunctionDeclaration) { // caso seja FunctionDeclaration no getDeclaration()
 
 			ArrayList<Parameter> parameters = ((FunctionDeclaration)a).getParameters();
+			
+			// verifica se o spelling do Identifier está presente nos parâmetros
 			for(Parameter parameter : parameters){
 				if(parameter.getIdentifier().getSpelling().equals( unaryExpressionId.getIdentifier().getSpelling() )){
 					idType = parameter.getIdentifierType() + "";
 					break;
 				}
 			}
+			
+			// caso o for não retorne nada, implica que o identifier da unary é o retorno
 			if(idType.equals("")){
 				idType = ((FunctionDeclaration)a).getReturnExp().getType();
 			}
+			
+			// seta o tipo 
 			unaryExpressionId.setType(idType);
 		}
 		
@@ -245,14 +274,21 @@ public class Checker implements Visitor{
 	}
 	
 	public Object visitUnaryExpressionFunction(UnaryExpressionFunction unaryExpressionFunction, Object obj) throws SemanticException {
+		
 		Identifier idU = unaryExpressionFunction.getIdentifier();
 		idU.visit(this, obj);
 		
+		// Verifica se a função já existe
 		AST a = identificationTable.retrieve(idU.getSpelling());
 		
 		if (a != null){
+			// Argumentos da chamada
 			ArrayList<Expression> arguments = unaryExpressionFunction.getArguments();
 			
+			/*
+			 *  Caso a quantidade de argumentos da função seja diferente do que foi
+			 *  declarado, ocorre um erro
+			 */
 			if (((FunctionDeclaration)a).getParameters().size() == arguments.size()){
 				for(Expression exp : arguments){
 					exp.visit(this, obj);
@@ -268,9 +304,18 @@ public class Checker implements Visitor{
 	}
 	
 	public Object visitWhileCommand(WhileCommand whileCommand, Object obj) throws SemanticException {
+		
 		Expression exp = whileCommand.getExpression();
 		exp.visit(this, obj);
 		
+		/*
+		 * Verifica expressão de condição no WHILE
+		 * 
+		 * Para ocorrer erro, vem:
+		 * 	- A expressão passada não seja uma expressão binária com um operador relacional
+		 * 	- A expressão não seja Unária tendo como tipo dela sendo inteiro
+		 * 		
+		 */
 		if ( !((exp instanceof BinaryExpression && ((BinaryExpression) exp).getOperator().getKind() == GrammarSymbols.RELATIONAL_OPERATOR))
 				&& !((exp instanceof UnaryExpression && ((UnaryExpression) exp).getType().equals(GrammarSymbols.INT + "")))){
 			
