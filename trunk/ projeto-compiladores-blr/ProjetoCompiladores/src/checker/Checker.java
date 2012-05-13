@@ -117,9 +117,11 @@ public class Checker implements Visitor{
 	}
 	
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException {
+		
 		Identifier fdId = functionDeclaration.getIdentifier();
 
 		AST a = identificationTable.retrieve(fdId.getSpelling());
+		
 		if (a == null){
 			identificationTable.enter(fdId.getSpelling(), functionDeclaration);
 			fdId.visit(this, obj);
@@ -138,12 +140,19 @@ public class Checker implements Visitor{
 			}
 			
 			Expression exp = functionDeclaration.getReturnExp();
+			boolean saveReturn = false;
 			if(exp != null){
 				exp.visit(this, obj);
+				saveReturn = true;
+			}
+			
+			identificationTable.closeScope();
+			
+			if(saveReturn){
+				identificationTable.enter( ((UnaryExpressionId)(functionDeclaration.getReturnExp())).getIdentifier().getSpelling(), functionDeclaration );
 			}
 
-			identificationTable.closeScope();
-		}else{
+		} else {
 			throw new SemanticException ("Already existent function!");
 		}
 		return null;
@@ -205,7 +214,7 @@ public class Checker implements Visitor{
 		unaryExpressionId.getIdentifier().visit(this, obj);
 		
 		AST a = unaryExpressionId.getIdentifier().getDeclaration();
-		String idType = null;
+		String idType = "";
 		
 		if(a instanceof AssignmentCommand){
 			idType = ((AssignmentCommand)a).getType();
@@ -219,7 +228,7 @@ public class Checker implements Visitor{
 					break;
 				}
 			}
-			if(idType.equals(null)){
+			if(idType.equals("")){
 				idType = ((FunctionDeclaration)a).getReturnExp().getType();
 			}
 			unaryExpressionId.setType(idType);
