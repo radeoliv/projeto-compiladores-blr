@@ -7,11 +7,15 @@
 # R8 - operadores aditivos e multiplicativos retornam o tipo do operandos
 
 a = 2+3
-b = 3-2
-c = 2.4*3.1
-d = 3.0/1.5
-
 testea = a+1
+
+b = 3-2
 testeb = b+1
+
+c = 2.4*3.1
 testec = c+1.1
+
+#Como d e' do tipo float (devido a operacao realizada), nao e' possivel soma-lo com um inteiro
+
+d = 3.0/1.5
 tested = d+1

@@ -3,12 +3,9 @@
 # Wrong
 #-----------------------------------------------------------
 
+# R17 - Parametros nao podem ter seu valor alterado.
 
-# R10 - nao pode existir procedimento com mesmo spelling
-
-
-function a () end
-
-function b (int x, int y) end
-
-function a (int x) end
+function y (int a, int b)
+	a = 2
+	b = 1
+end
