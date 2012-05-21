@@ -1,7 +1,7 @@
 package classes.expression;
 
+import util.Visitor;
 import checker.SemanticException;
-import checker.Visitor;
 import classes.terminal.Operator;
 
 public class BinaryExpression extends Expression {

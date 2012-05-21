@@ -2,8 +2,9 @@ package classes.expression;
 
 import java.util.ArrayList;
 
+import util.Visitor;
+
 import checker.SemanticException;
-import checker.Visitor;
 import classes.terminal.Identifier;
 
 public class UnaryExpressionFunction extends UnaryExpression{

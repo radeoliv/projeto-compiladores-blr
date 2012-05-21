@@ -3,6 +3,7 @@ package checker;
 import java.util.ArrayList;
 
 import parser.GrammarSymbols;
+import util.Visitor;
 import util.AST.AST;
 import util.symbolsTable.IdentificationTable;
 import classes.command.*;

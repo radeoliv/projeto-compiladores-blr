@@ -1,7 +1,7 @@
 package classes.command;
 
+import util.Visitor;
 import checker.SemanticException;
-import checker.Visitor;
 import classes.expression.Expression;
 
 public class PrintCommand extends Command {

@@ -1,6 +1,6 @@
 package classes.expression;
 
-import checker.Visitor;
+import util.Visitor;
 import classes.terminal.Number;
 
 public class UnaryExpressionNumber extends UnaryExpression {

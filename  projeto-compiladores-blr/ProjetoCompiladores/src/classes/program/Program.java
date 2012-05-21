@@ -1,8 +1,8 @@
 package classes.program;
 
+import util.Visitor;
 import util.AST.AST;
 import checker.SemanticException;
-import checker.Visitor;
 import classes.command.Command;
 import classes.functionDeclaration.FunctionDeclaration;
 

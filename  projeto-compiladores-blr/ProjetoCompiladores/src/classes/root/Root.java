@@ -3,8 +3,8 @@ package classes.root;
 import java.util.ArrayList;
 
 import checker.SemanticException;
-import checker.Visitor;
 import classes.program.Program;
+import util.Visitor;
 import util.AST.AST;
 
 public class Root extends AST{
