@@ -1,9 +1,10 @@
 package classes.functionDeclaration;
 
 import java.util.ArrayList;
+
+import util.Visitor;
 import util.AST.AST;
 import checker.SemanticException;
-import checker.Visitor;
 import classes.command.Command;
 import classes.expression.Expression;
 import classes.terminal.Identifier;

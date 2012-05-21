@@ -2,8 +2,9 @@ package classes.command;
 
 import java.util.ArrayList;
 
+import util.Visitor;
+
 import checker.SemanticException;
-import checker.Visitor;
 import classes.expression.Expression;
 
 public class IfCommand extends Command {

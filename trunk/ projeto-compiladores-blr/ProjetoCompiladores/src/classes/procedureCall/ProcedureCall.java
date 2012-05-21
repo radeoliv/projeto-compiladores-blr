@@ -2,8 +2,9 @@ package classes.procedureCall;
 
 import java.util.ArrayList;
 
+import util.Visitor;
+
 import checker.SemanticException;
-import checker.Visitor;
 import classes.command.Command;
 import classes.expression.Expression;
 import classes.terminal.Identifier;

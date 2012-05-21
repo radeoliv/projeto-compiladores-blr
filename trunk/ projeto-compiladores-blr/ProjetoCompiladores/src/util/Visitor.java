@@ -1,5 +1,6 @@
-package checker;
+package util;
 
+import checker.SemanticException;
 import classes.command.AssignmentCommand;
 import classes.command.BreakCommand;
 import classes.command.IfCommand;

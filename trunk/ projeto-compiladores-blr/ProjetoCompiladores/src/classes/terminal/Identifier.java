@@ -1,8 +1,8 @@
 package classes.terminal;
 
 import checker.SemanticException;
-import checker.Visitor;
 import scanner.Token;
+import util.Visitor;
 import util.AST.AST;
 
 public class Identifier extends Terminal {

@@ -1,7 +1,7 @@
 package classes.terminal;
 
-import checker.Visitor;
 import scanner.Token;
+import util.Visitor;
 
 public class Number extends Terminal {
 	

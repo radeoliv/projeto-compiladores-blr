@@ -2,7 +2,7 @@ package classes.functionDeclaration;
 
 import classes.terminal.Identifier;
 import checker.SemanticException;
-import checker.Visitor;
+import util.Visitor;
 import util.AST.AST;
 
 public class Parameter extends AST{
