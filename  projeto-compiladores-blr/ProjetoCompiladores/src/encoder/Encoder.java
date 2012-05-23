@@ -2,6 +2,7 @@ package encoder;
 
 import java.util.ArrayList;
 
+import util.Arquivo;
 import util.Visitor;
 import util.AST.AST;
 import checker.SemanticException;
@@ -25,9 +26,10 @@ import classes.terminal.Operator;
 
 public class Encoder implements Visitor{
 
-	int nextInstruction = 0;
-	//ArrayList ou []?
-	ArrayList<Instruction> instructions;
+	private ArrayList<Instruction> instructions;
+	private int startSectionData = 0;
+	private Arquivo arquivo;
+	private int contIfElse;
 	
 	public Encoder(){}
 	
