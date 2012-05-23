@@ -33,7 +33,7 @@ public class Encoder implements Visitor{
 	private Arquivo file;
 	private static final int DESLOCAMENTO = 4;
 	// Necessário?
-	private int startSectionData = 0;
+	//private int startSectionData = 0;
 
 	//Contadores
 	private int contIfElse;
@@ -41,7 +41,6 @@ public class Encoder implements Visitor{
 	
 	public Encoder(){}
 	
-	// OK! Revisar!
 	public void encode(AST a){
 		instructions = new ArrayList<Instruction>();
 		try {
@@ -52,7 +51,6 @@ public class Encoder implements Visitor{
 		}
 	}
 	
-	// OK! Revisar!
 	private void createFile(){
 		String input = Properties.sourceCodeLocation; 
 		String output = (input.substring(0, input.lastIndexOf('.')+1)).concat("asm");
