@@ -39,7 +39,6 @@ public interface InstructionType {
 	public static final String NAME_SECTION = "SECTION";
 	public static final String NAME_PUSH = "push";
 	public static final String WORD_POP = "pop";
-	public static final String FLD = "fld";
 	public static final String NAME_MOV = "mov";
 	public static final String WORD_SUB = "sub";
 	public static final String WORD_ADD = "add";
@@ -49,12 +48,10 @@ public interface InstructionType {
 	public static final String TIPO_INT = "dd";
 	public static final String CONSTANTE = "const";
 	public static final String DWORD = "dword";
-	public static final String QWORD = "qword";
 	public static final String ST1 = "st1";
 	
 	public static final String EBP = "ebp";
 	public static final String ESP = "esp";
 	public static final String EAX = "eax";
 	public static final String EBX = "ebx";
-
 }

@@ -6,6 +6,13 @@ public class Instruction {
 	private String op2; 
 	private String op3;
 	
+	public Instruction(int opCode, String op1, String op2, String op3){
+		this.opCode = opCode;
+		this.op1 = op1;
+		this.op2 = op2;
+		this.op3 = op3;
+	}
+	
 	public int getOpCode() {
 		return opCode;
 	}
@@ -38,14 +45,6 @@ public class Instruction {
 		this.op3 = op3;
 	}
 
-	
-	public Instruction(int opCode, String op1, String op2, String op3){
-		this.opCode = opCode;
-		this.op1 = op1;
-		this.op2 = op2;
-		this.op3 = op3;
-	}	
-	
 	public String toString(){
 		switch(this.opCode){
 		
@@ -58,7 +57,7 @@ public class Instruction {
 			case InstructionType.RET:
 				return (InstructionType.NAME_RET);
 			
-			//Talvez seja removido. Não temos variáveis globais
+			//TODO: Talvez seja removido. Não temos variáveis globais
 			case InstructionType.VARIAVEL_GLOBAL:
 				return (this.op1+": "+ InstructionType.TIPO_INT+ " 0");
 				
@@ -73,15 +72,15 @@ public class Instruction {
 					return ("_"+this.op1+":");
 				else 
 					return(InstructionType.WINMAIN+":");
-				
-			case InstructionType.PUSH:
-				return gerarPush();
-				
+			
 			case InstructionType.MOV:
 				return (InstructionType.NAME_MOV+" "+this.op1+", "+this.op2);
 				
+			case InstructionType.PUSH:
+				return putPush();
+				
 			case InstructionType.POP:
-				return (gerarPop());
+				return (putPop());
 			
 			case InstructionType.ADD:
 				return (InstructionType.WORD_ADD+" "+this.op1+", "+this.op2);
@@ -104,46 +103,43 @@ public class Instruction {
 		
 	}
 	
-	private String gerarPush(){
-		if(this.op1.equals("int")) {
-			if(this.op3 == null || this.op3.equals("")){
-				return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" "+this.op2+"");
-			}else{
-				return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" "+"["+this.op2+this.op3+"]");
+	private String putPush(){
+		//op1, caso exista, será usado sempre para passar o tipo int.
+		//op2 é o registrador/valor que será inserido na pilha
+		//op3, caso exista, é o deslocamento associado a um registrador
+		
+		if(this.op1 != null && this.op1.equals("int")){
+			if(this.op3 == null || this.op3.equals(""))
+			{
+				//Usado para constantes 
+				//Ex: push dword 0
+				return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" "+this.op2);
+			} 
+			else
+			{
+				//Usado para registradores + deslocamentos
+				//Ex: push dword [ebp+4]
+				return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" ["+this.op2+this.op3+"]");
 			}
-		}else
-			if(this.op1.equals("boolean")){
-				if( this.op2.equals("false")){
-					return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" 0");
-				}else{
-					if( this.op2.equals("true"))
-						return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" 1");
-					else{
-						return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" ["+this.op2+"]");
-					}
-				}
-			}
-		return (InstructionType.NAME_PUSH+" "+this.op1);
+		} else {
+			//Usado para registradores
+			//Ex: push ebp
+			return (InstructionType.NAME_PUSH+" "+this.op2);
+		}
 	}
-	private String gerarPop(){
-		if(this.op1.equals("int")) {
-			if(this.op3 == null || this.op3.equals("")){
-				return (InstructionType.WORD_POP+" "+InstructionType.DWORD+" ["+this.op2+"]");
-			}else{
-				return (InstructionType.WORD_POP+" "+InstructionType.DWORD+" "+"["+this.op2+this.op3+"]");
-			}
-		}else
-			if(this.op1.equals("boolean")){
-				if( this.op2.equals("false")){
-					return (InstructionType.WORD_POP+" "+InstructionType.DWORD+" 0");
-				}else{
-					if( this.op2.equals("true"))
-						return (InstructionType.WORD_POP+" "+InstructionType.DWORD+" 1");
-					else{
-						return (InstructionType.WORD_POP+" "+InstructionType.DWORD+" ["+this.op2+"]");
-					}
-				}
-			}	
-		return (InstructionType.NAME_PUSH+" "+this.op1);
+	
+	private String putPop(){
+		//op1, caso exista, será usado sempre para passar o tipo int.
+		//op2 é o registrador/valor que será inserido na pilha
+		//op3, caso exista, é o deslocamento associado a um registrador
+		
+		if(this.op1 != null && this.op1.equals("int"))
+			//Usado para registradores + deslocamentos
+			//Ex: pop dword [ebp+4]
+			return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" ["+this.op2+this.op3+"]");
+		else
+			//Usado para registradores
+			//Ex: push ebp
+			return (InstructionType.NAME_PUSH+" "+this.op2);
 	}
 }
