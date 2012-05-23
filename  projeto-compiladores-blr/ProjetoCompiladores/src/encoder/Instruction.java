@@ -99,10 +99,7 @@ public class Instruction {
 	private String iPop(){
 		//op1, caso exista, será usado sempre para passar o tipo int.
 		//op2 é o registrador/valor que será inserido na pilha
-		//op3, caso exista, é o deslocamento associado a um registrador
-		
-		// Pode ter POP sem deslocamento E aí?
-		
+		//op3, caso exista, é o deslocamento associado a um registrador	
 		
 		if(this.op1 != null && this.op1.equals("int"))
 			//Usado para registradores + deslocamentos
