@@ -4,7 +4,7 @@ public class Instruction {
 	private int opCode; 
 	private String op1; 
 	private String op2; 
-	private String op3; 
+	private String op3;
 	
 	public int getOpCode() {
 		return opCode;
@@ -48,55 +48,58 @@ public class Instruction {
 	
 	public String toString(){
 		switch(this.opCode){
-		case InstructionType.EXTERN:
-			return (InstructionType.NAME_EXTERN+" "+this.op1);
-			
-		case InstructionType.SECTION:
-			return (InstructionType.NAME_SECTION+" "+this.op1);
-			
-		case InstructionType.RET:
-			return (InstructionType.NAME_RET);
-			
-		case InstructionType.VARIAVEL_GLOBAL:
-			return (this.op1+": "+ InstructionType.TIPO_INT+ " 0");
-			
-		case InstructionType.INT_FORMAT:
-			return ("intFormat: db "+ "\"%d\""+" 10, 0");
 		
-		case InstructionType.GLOBAL:
-			return ("global "+ this.op1);
-		
-		case InstructionType.FUNCAO_LABEL:
-			if(!this.op1.equals("main"))
-				return ("_"+this.op1+":");
-			else return(InstructionType.WINMAIN+":");
+			case InstructionType.EXTERN:
+				return (InstructionType.NAME_EXTERN+" "+this.op1);
+				
+			case InstructionType.SECTION:
+				return (InstructionType.NAME_SECTION+" "+this.op1);
+				
+			case InstructionType.RET:
+				return (InstructionType.NAME_RET);
 			
-		case InstructionType.PUSH:
-			return gerarPush();
+			//Talvez seja removido. Não temos variáveis globais
+			case InstructionType.VARIAVEL_GLOBAL:
+				return (this.op1+": "+ InstructionType.TIPO_INT+ " 0");
+				
+			case InstructionType.INT_FORMAT:
+				return ("intFormat: db "+ "\"%d\""+" 10, 0");
 			
-		case InstructionType.MOV:
-			return (InstructionType.NAME_MOV+" "+this.op1+", "+this.op2);
+			case InstructionType.GLOBAL:
+				return ("global "+ this.op1);
 			
-		case InstructionType.POP:
-			return (gerarPop());
-		
-		case InstructionType.ADD:
-			return (InstructionType.WORD_ADD+" "+this.op1+", "+this.op2);
-		
-		case InstructionType.SUB:
-			return (InstructionType.WORD_SUB+" "+this.op1+", "+this.op2);
+			case InstructionType.FUNCTION_LABEL:
+				if(!this.op1.equals(InstructionType.WINMAIN))
+					return ("_"+this.op1+":");
+				else 
+					return(InstructionType.WINMAIN+":");
+				
+			case InstructionType.PUSH:
+				return gerarPush();
+				
+			case InstructionType.MOV:
+				return (InstructionType.NAME_MOV+" "+this.op1+", "+this.op2);
+				
+			case InstructionType.POP:
+				return (gerarPop());
 			
-		case InstructionType.MULT:
-			return (InstructionType.WORD_MULT+" "+this.op1+", "+this.op2);
+			case InstructionType.ADD:
+				return (InstructionType.WORD_ADD+" "+this.op1+", "+this.op2);
 			
-		case InstructionType.DIV:
-			return (InstructionType.WORD_DIV+" "+this.op1+", "+this.op2);
-			
-		case InstructionType.CALL_FUNCTION:
-			return (InstructionType.CALL+" _"+this.op1);
-			
-		default:
-			return (opCode+" "+op1+" "+op2+" "+op3);
+			case InstructionType.SUB:
+				return (InstructionType.WORD_SUB+" "+this.op1+", "+this.op2);
+				
+			case InstructionType.MULT:
+				return (InstructionType.WORD_MULT+" "+this.op1+", "+this.op2);
+				
+			case InstructionType.DIV:
+				return (InstructionType.WORD_DIV+" "+this.op1+", "+this.op2);
+				
+			case InstructionType.CALL_FUNCTION:
+				return (InstructionType.CALL+" _"+this.op1);
+				
+			default:
+				return (opCode+" "+op1+" "+op2+" "+op3);
 		}
 		
 	}

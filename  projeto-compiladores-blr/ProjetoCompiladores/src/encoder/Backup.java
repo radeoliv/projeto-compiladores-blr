@@ -38,7 +38,7 @@ import util.AST.Terminal.Operator;
 import util.AST.Terminal.Terminal;
 import util.AST.Terminal.Type;
 
-public class Encoder implements Visitor {
+public class Backup implements Visitor {
 
 	private ArrayList<Instruction> instructions;
 	private int startSectionData = 0;
@@ -128,7 +128,7 @@ public class Encoder implements Visitor {
 		
 		com.getFunctionName().visit(this, com);
 		Identifier id = com.getFunctionName();
-		emit(InstructionType.FUNCAO_LABEL,id.getSpelling());
+		emit(InstructionType.FUNCTION_LABEL,id.getSpelling());
 		
 		int deslocamento=4;
 		for(int i=(com.getParameters().size()-1);i>=0;i--){
@@ -345,13 +345,13 @@ public class Encoder implements Visitor {
 				s.visit(this, arg);
 			}
 			String labelElse = fd.getFunctionName().getSpelling()+'_'+"else_"+contIfElse+"_block";
-			emit(InstructionType.FUNCAO_LABEL, labelElse);
+			emit(InstructionType.FUNCTION_LABEL, labelElse);
 			
 			for(Statement s: statement.getElseStatements()){
 				s.visit(this, arg);
 			}
 			String label = fd.getFunctionName().getSpelling()+'_'+"endIf_"+contIfElse;
-			emit(InstructionType.FUNCAO_LABEL, label);
+			emit(InstructionType.FUNCTION_LABEL, label);
 			contIfElse++;
 		}
 		return null;
