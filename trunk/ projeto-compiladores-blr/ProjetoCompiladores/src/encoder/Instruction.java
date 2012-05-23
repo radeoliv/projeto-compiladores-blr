@@ -71,7 +71,7 @@ public class Instruction {
 		}
 	}
 	
-	// Poderíamos transformar PUSH e POP no msm método
+
 	private String iPush(){
 		//op1, caso exista, será usado sempre para passar o tipo int.
 		//op2 é o registrador/valor que será inserido na pilha
@@ -103,35 +103,20 @@ public class Instruction {
 		
 		// Pode ter POP sem deslocamento E aí?
 		
-		/*
+		
 		if(this.op1 != null && this.op1.equals("int"))
 			//Usado para registradores + deslocamentos
 			//Ex: pop dword [ebp+4]
-			return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" ["+this.op2+this.op3+"]");
+			return ("pop dword ["+this.op2+"+"+this.op3+"]");
+			//return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" ["+this.op2+this.op3+"]");
 		else
-			//Usado para registradores
-			//Ex: push ebp
-			return (InstructionType.NAME_PUSH+" "+this.op2);
-		*/
-		
-		if(this.op1 != null && this.op1.equals("int")){
-			if(this.op3 == null || this.op3.equals("")){
-				//Usado para constantes 
-				//Ex: pop dword 0
-				return ("pop dword "+this.op2);
-				//return ("push "+InstructionType.DWORD+" "+this.op2);
-			}else{
-				//Usado para registradores + deslocamentos
-				//Ex: pop dword [ebp+4]
-				return ("pop dword ["+this.op2+"+"+this.op3+"]");
-				//return ("push "+InstructionType.DWORD+" ["+this.op2+this.op3+"]");
-			}
-		} else {
 			//Usado para registradores
 			//Ex: pop ebp
 			return ("pop "+this.op2);
-		}
+			//return (InstructionType.NAME_PUSH+" "+this.op2);
 		
+		
+				
 	}
 	
 	
