@@ -6,7 +6,7 @@ public interface InstructionType {
 	public static final int RET = 2;
 	public static final int PUSH = 3;
 	public static final int VARIAVEL_GLOBAL = 4;
-	public static final int FUNCAO_LABEL = 6;
+	public static final int FUNCTION_LABEL = 6;
 	
 	public static final int POP = 7;
 	public static final int MOV = 8;
