@@ -2,6 +2,8 @@ package encoder;
 
 import java.util.ArrayList;
 
+import parser.GrammarSymbols;
+
 import compiler.Properties;
 
 import util.Arquivo;
@@ -217,7 +219,8 @@ public class Encoder implements Visitor{
 	@Override
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj)
 			throws SemanticException {
-		// TODO Auto-generated method stub
+		printCommand.getExpression().visit(this, obj);
+		emit(InstructionType.CALL_FUNCTION, InstructionType.PRINTF);		
 		return null;
 	}
 
@@ -232,7 +235,22 @@ public class Encoder implements Visitor{
 	@Override
 	public Object visitBinaryExpression(BinaryExpression binaryExpression,
 			Object obj) throws SemanticException {
-		// TODO Auto-generated method stub
+		
+		/*
+		 * push exp1
+		 * push exp2
+		 * op
+		 */
+		
+		// empilha resultado leftExpression
+		binaryExpression.getLeftExpression().visit(this, obj);
+		
+		// empilha resultado rightExpression
+		binaryExpression.getRightExpression().visit(this, obj);
+		
+		// realiza operação empilhando o resultado
+		binaryExpression.getOperator().visit(this, obj);
+		
 		return null;
 	}
 
@@ -274,7 +292,31 @@ public class Encoder implements Visitor{
 
 	@Override
 	public Object visitOperator(Operator operator, Object obj) {
-		// TODO Auto-generated method stub
+
+		// pega o tipo da operação
+		int operatorKind = operator.getKind();
+				
+		/*
+		 *  considerando que os resultados das expressões já foram empilhados
+		 *  só precisamos verificar qual o tipo da operação que deverá ser feita
+		 */
+		switch (operatorKind) {
+		case GrammarSymbols.MINUS:
+			emit(InstructionType.SUB);
+			break;
+		case GrammarSymbols.PLUS:
+			emit(InstructionType.ADD);
+			break;
+		case GrammarSymbols.MULTIPLICATION:
+			emit(InstructionType.MULT);
+			break;
+		case GrammarSymbols.DIVISION:
+			emit(InstructionType.DIV);
+			break;
+		default:
+			break;
+		}
+
 		return null;
 	}
 
