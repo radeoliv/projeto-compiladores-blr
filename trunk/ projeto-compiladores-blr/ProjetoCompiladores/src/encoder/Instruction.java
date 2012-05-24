@@ -2,20 +2,20 @@ package encoder;
 
 public class Instruction {
 	// Mudar esse nomes seria cool
-	private int opCode; 
+	private int operationCode; 
 	private String op1; 
 	private String op2; 
 	private String op3;
 	
 	public Instruction(int opCode, String op1, String op2, String op3){
-		this.opCode = opCode;
+		this.operationCode = opCode;
 		this.op1 = op1;
 		this.op2 = op2;
 		this.op3 = op3;
 	}
 	
 	public String toString(){
-		switch(this.opCode){
+		switch(this.operationCode){
 		
 			case InstructionType.EXTERN:
 				return ("extern "+this.op1);
@@ -45,12 +45,14 @@ public class Instruction {
 			case InstructionType.MOV:
 				return ("mov "+this.op1+", "+this.op2);
 				
-			// Faltando o CMP, né?
 			case InstructionType.CMP:
 				return ("cmp "+this.op1+", "+this.op2);
 				
 			case InstructionType.RET:
 				return ("ret");
+				
+			case InstructionType.JMP:
+				return ("jmp "+this.op1+":");
 				
 			case InstructionType.ADD:
 				return ("add "+this.op1+", "+this.op2);
@@ -62,12 +64,16 @@ public class Instruction {
 				return ("imul "+this.op1+", "+this.op2);
 				
 			case InstructionType.DIV:
-				return ("idiv "+this.op1+", "+this.op2);
+				return ("idiv "+this.op1+", "+this.op2);				
+			
+			case InstructionType.INT_FORMAT:
+				return ("intFormat: db \"%d\", 10, 0");
 				
-			// E se for um jump?
+			case InstructionType.BLOCKS_SEPARATOR:
+				return (InstructionType.BLOCK_SEPARATOR_STRING);
 				
 			default:
-				return (opCode+" "+op1+" "+op2+" "+op3);
+				return (operationCode+" "+op1+" "+op2+" "+op3);
 		}
 	}
 	
@@ -87,7 +93,6 @@ public class Instruction {
 				//Usado para registradores + deslocamentos
 				//Ex: push dword [ebp+4]
 				return ("push dword ["+this.op2+"+"+this.op3+"]");
-				//return ("push "+InstructionType.DWORD+" ["+this.op2+this.op3+"]");
 			}
 		} else {
 			//Usado para registradores
@@ -105,24 +110,19 @@ public class Instruction {
 			//Usado para registradores + deslocamentos
 			//Ex: pop dword [ebp+4]
 			return ("pop dword ["+this.op2+"+"+this.op3+"]");
-			//return (InstructionType.NAME_PUSH+" "+InstructionType.DWORD+" ["+this.op2+this.op3+"]");
 		else
 			//Usado para registradores
 			//Ex: pop ebp
 			return ("pop "+this.op2);
-			//return (InstructionType.NAME_PUSH+" "+this.op2);
-		
-		
-				
 	}
 	
 	
 	public int getOpCode() {
-		return opCode;
+		return operationCode;
 	}
 
 	public void setOpCode(int opCode) {
-		this.opCode = opCode;
+		this.operationCode = opCode;
 	}
 	
 	public String getOp1() {

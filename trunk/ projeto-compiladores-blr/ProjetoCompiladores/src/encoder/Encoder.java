@@ -27,11 +27,20 @@ import classes.terminal.Identifier;
 import classes.terminal.Number;
 import classes.terminal.Operator;
 
-public class Encoder implements Visitor{
+/*
+ * Implementado: criação do cabeçalho do topo do arquivo gerado + visit de root, program.
+ */
 
+public class Encoder implements Visitor{
+	
+	//A seção de função (declarações de funções) sempre vem após o cabeçalho. Como este não muda, o tamanho é constante.
+	public static final int FUNCTION_SECTION = 9;
+	
 	private ArrayList<Instruction> instructions;
+	
 	private Arquivo file;
 	private static final int DESLOCAMENTO = 4;
+	
 	// Necessário?
 	//private int startSectionData = 0;
 
@@ -67,66 +76,91 @@ public class Encoder implements Visitor{
 		file.close();
 	}
 	
-	public void emit(int opCode, String op1){
-		instructions.add(new Instruction(opCode,op1,null,null));
+	public void emit(int operationCode){
+		instructions.add(new Instruction(operationCode, null, null, null));
 	}
 	
-	public void emit(int opCode, String op1,String op2){
-		instructions.add(new Instruction(opCode,op1,op2,null));
+	public void emit(int operationCode, String op1){
+		instructions.add(new Instruction(operationCode,op1,null,null));
 	}
 	
-	public void emit(int opCode, String op1, String op2, String op3){
-		instructions.add(new Instruction(opCode,op1,op2,op3));
+	public void emit(int operationCode, String op1,String op2){
+		instructions.add(new Instruction(operationCode,op1,op2,null));
 	}
 	
-	public void emit(int position, int opCode, String op1,String op2){
-		instructions.add(position,new Instruction(opCode,op1,op2,null));
+	public void emit(int operationCode, String op1, String op2, String op3){
+		instructions.add(new Instruction(operationCode,op1,op2,op3));
 	}
 	
+	public void emit(int position, int operationCode, String op1,String op2){
+		instructions.add(position,new Instruction(operationCode,op1,op2,null));
+	}
 	
-	public Object visitRoot(Root root, Object obj) throws SemanticException{
-		// Printf de C
+	private void insertHeader(){
+		emit(InstructionType.BLOCKS_SEPARATOR);
+		
+		// Importando Printf
 		emit(InstructionType.EXTERN,InstructionType.PRINTF);
+		emit(InstructionType.BLOCKS_SEPARATOR);
+		
 		// Section Data
 		emit(InstructionType.SECTION, InstructionType.DATA);
-		// Começo da Section Data
-		// Acho que não precisamos disso pq não tem globais
+		emit(InstructionType.INT_FORMAT);
+		emit(InstructionType.BLOCKS_SEPARATOR);
+		
+		// Section Text
+		emit(InstructionType.SECTION, InstructionType.TEXT);
+		emit(InstructionType.GLOBAL, InstructionType.WINMAIN);
+		emit(InstructionType.BLOCKS_SEPARATOR);
+	}
+	
+	public Object visitRoot(Root root, Object obj) throws SemanticException{
 		// startSectionData = instructions.size();
 		
-		for(Program p:root.getPrograms()){
+		//Gerando informações pré-código - 'cabeçalho'
+		insertHeader();
+		//Gerando label do main
+		emit(InstructionType.FUNCTION_LABEL, InstructionType.WINMAIN);
+		
+		ArrayList<Program> programList = root.getPrograms();
+		
+		for(Program program : programList){
 			// Pq Nadile passa o primeiro argumento e não obj e todos os visit?
 			// pra saber se é global ou não?
-			p.visit(this, root);
+			//WTF?!
+			
+			//TODO: Por que raios o root está sendo passado como parametro?
+			//program.visit(this, null);
+			program.visit(this, root);
 		}
-		// E ela retorna pq?
-		return root;
+
+		return null;
 	}
 	
 
 	public Object visitProgram(Program program, Object obj) throws SemanticException{
-		Object cmd = program.getCommand();
+		Command cmd = program.getCommand();
+		FunctionDeclaration fd = program.getFunction();
 		
-		// Acho que podemos colocar isso aqui já
-		emit(InstructionType.SECTION,InstructionType.TEXT);
-		emit(InstructionType.GLOBAL,InstructionType.WINMAIN);
 		// Temos que fazer algo para que os comandos sejam adicionados nessa área e funções na delas
-		// entao acho que temos que ter um cont aqui
-		// Como não temos main, vamos ter que criar um label pra main, aí poderia ser a primeira
-		// TODO
+		// entao acho que temos que ter um cont aqui????
 		
-		if (cmd instanceof Command){
-			((Command) cmd).visit(this, program);
-			
+		if (cmd != null){
+			cmd.visit(this, null);
 		}else{
-			((FunctionDeclaration)cmd).visit(this, program);
+			fd.visit(this, fd);
 		}
 		
-		return program;
+		return null;
 	}
 	
 	@Override
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand, Object obj) throws SemanticException{
+		
+		
 		assignmentCommand.getId().visit(this, obj);
+		
+		// considerando que o visit do expression empilhará o resultado
 		assignmentCommand.getExpression().visit(this, obj);		
 		
 		if (obj instanceof FunctionDeclaration){

@@ -12,26 +12,28 @@ public interface InstructionType {
 	public static final int MOV = 7;
 	public static final int CMP = 8;
 	public static final int RET = 9;
+	public static final int JMP = 10;
 	//public static final int VARIAVEL_GLOBAL = 4;
 		
-	public static final int ADD = 10;
-	public static final int SUB = 11;
-	public static final int MULT = 12;
-	public static final int DIV = 13;
-	//public static final int INT_FORMAT = 14;
+	public static final int ADD = 11;
+	public static final int SUB = 12;
+	public static final int MULT = 13;
+	public static final int DIV = 14;
+	public static final int INT_FORMAT = 15;
+	public static final int BLOCKS_SEPARATOR = 16;
 	
 	
-	//public static final String NAME_EXTERN = "extern";
 	public static final String PRINTF = "_printf";
-	//public static final String NAME_SECTION = "SECTION";
 	public static final String DATA = ".data";
 	public static final String TEXT = ".text";
 	public static final String WINMAIN = "_WinMain@16";
+	//public static final String NAME_EXTERN = "extern";
+	//public static final String NAME_SECTION = "SECTION";
 	//public static final String CALL = "call";
 	
 
 	//public static final String NAME_PUSH = "push";
-	public static final String WORD_POP = "pop";
+	//public static final String WORD_POP = "pop";
 	//public static final String NAME_MOV = "mov";
 	//public static final String NAME_RET = "ret";
 	
@@ -52,10 +54,11 @@ public interface InstructionType {
 	//public static final String TIPO_INT = "dd";
 	//public static final String CONSTANTE = "const";
 	//public static final String DWORD = "dword";
-	public static final String ST1 = "st1";
 	
 	public static final String EBP = "ebp";
 	public static final String ESP = "esp";
 	public static final String EAX = "eax";
 	public static final String EBX = "ebx";
+	
+	public static final String BLOCK_SEPARATOR_STRING = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
 }
