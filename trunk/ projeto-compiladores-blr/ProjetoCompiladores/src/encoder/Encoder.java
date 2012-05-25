@@ -15,6 +15,7 @@ import classes.command.IfCommand;
 import classes.command.PrintCommand;
 import classes.command.WhileCommand;
 import classes.expression.BinaryExpression;
+import classes.expression.Expression;
 import classes.expression.UnaryExpressionFunction;
 import classes.expression.UnaryExpressionId;
 import classes.expression.UnaryExpressionNumber;
@@ -103,7 +104,7 @@ public class Encoder implements Visitor{
 	private void insertHeader(){
 		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
-		// Importando Printf 
+		// Importando Printf
 		emit(InstructionType.EXTERN,InstructionType.PRINTF, instructions);
 		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
@@ -251,7 +252,7 @@ public class Encoder implements Visitor{
 		emit(InstructionType.CALL_FUNCTION, InstructionType.PRINTF, destiny);
 		return null;
 	}
-
+	
 	
 	@Override
 	public Object visitParameter(Parameter parameter, Object obj)
@@ -297,7 +298,24 @@ public class Encoder implements Visitor{
 	public Object visitUnaryExpressionFunction(
 			UnaryExpressionFunction unaryExpressionFunction, Object obj)
 			throws SemanticException {
-		// TODO Auto-generated method stub
+
+		ArrayList<Instruction> destiny = instructions;
+		if(obj instanceof FunctionDeclaration)
+			destiny = functionInstructions;
+		
+		// visita identificador
+		unaryExpressionFunction.getIdentifier().visit(this, obj);
+		
+		ArrayList<Expression> arguments = unaryExpressionFunction.getArguments();
+		for (Expression e : arguments){
+			// empilha os parametros
+			e.visit(this, null);
+		}
+		
+		String idFunction = unaryExpressionFunction.getIdentifier().getSpelling();
+		
+		emit(InstructionType.FUNCTION_LABEL, "_" + idFunction, destiny);
+		
 		return null;
 	}
 
