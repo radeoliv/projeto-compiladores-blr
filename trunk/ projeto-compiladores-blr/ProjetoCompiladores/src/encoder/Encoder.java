@@ -2,11 +2,8 @@ package encoder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import parser.GrammarSymbols;
-
 import compiler.Properties;
-
 import util.Arquivo;
 import util.Visitor;
 import util.AST.AST;
@@ -40,6 +37,7 @@ public class Encoder implements Visitor{
 	private Arquivo file;
 	private int level;
 	private int contIfElse;
+	private int contWhile;
 	private HashMap<String, IdentifierLocation> idMap;
 	private ArrayList<Instruction> functionInstructions;
 	
@@ -52,6 +50,7 @@ public class Encoder implements Visitor{
 		//Nível principal (da main) é 0
 		this.level = 0;
 		this.contIfElse = 0;
+		this.contWhile = 0;
 		this.idMap = new HashMap<String, IdentifierLocation>();
 		this.functionInstructions = new ArrayList<Instruction>();
 	}
@@ -157,8 +156,8 @@ public class Encoder implements Visitor{
 		
 		// Resultado de expressão em EAX
 		assignmentCommand.getExpression().visit(this, obj);
-		
 		assignmentCommand.getId().visit(this, obj);
+		
 		if (obj instanceof FunctionDeclaration){
 			
 		}else{
@@ -186,11 +185,37 @@ public class Encoder implements Visitor{
 	}
 	
 	@Override
-	public Object visitWhileCommand(WhileCommand whileCommand, Object obj)
-			throws SemanticException {
-		// TODO Auto-generated method stub
+	public Object visitWhileCommand(WhileCommand whileCommand, Object obj) throws SemanticException {
+		ArrayList<Instruction> destiny;
+		String label;
+		contWhile++;
+		
+		if (obj instanceof FunctionDeclaration){
+			// Adicionar para uma função
+			destiny = functionInstructions;
+			String functionName = ((FunctionDeclaration)obj).getIdentifier().getSpelling();
+			label = functionName+"_while_"+contWhile;
+			
+		}else{
+			// Adicionar no final do array de instruções
+			destiny = instructions;
+			label = "main_while_"+contWhile;
+		}
+		
+		emit(InstructionType.FUNCTION_LABEL, label+"_begin", destiny);
+		openScope(destiny);
+		whileCommand.getExpression().visit(this, obj);
+		for (Command cmd : whileCommand.getCommands()){
+			cmd.visit(this, obj);
+		}
+		
+		closeScope(destiny);
+		emit(InstructionType.FUNCTION_LABEL, label+"_end", destiny);
+		
+		
 		return null;
 	}
+
 	
 	@Override
 	public Object visitIfCommand(IfCommand ifCommand, Object obj)
@@ -320,6 +345,27 @@ public class Encoder implements Visitor{
 		}
 
 		return null;
+	}
+	
+	private String whatJump(Operator op){
+		String jump = null;
+		
+		switch (op.getKind()){
+		case GrammarSymbols.EQUALS:
+			break;
+		case GrammarSymbols.DIFFERENT:
+			break;
+		case GrammarSymbols.GREATER_THAN:
+			break;
+		case GrammarSymbols.GREATER_THAN_OR_EQUAL_TO:
+			break;
+		case GrammarSymbols.LESS_THAN:
+			break;
+		case GrammarSymbols.LESS_THAN_OR_EQUAL_TO:
+			break;
+		
+		}
+		return jump;
 	}
 	
 	private void openScope(ArrayList<Instruction> instructionList){
