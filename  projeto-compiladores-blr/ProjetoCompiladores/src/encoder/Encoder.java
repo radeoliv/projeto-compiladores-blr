@@ -40,7 +40,8 @@ public class Encoder implements Visitor{
 	private Arquivo file;
 	private int level;
 	private int contIfElse;
-	HashMap<String, IdentifierLocation> idMap;
+	private HashMap<String, IdentifierLocation> idMap;
+	private ArrayList<Instruction> functionInstructions;
 	
 	// Necessário?
 	//private int startSectionData = 0;
@@ -52,6 +53,7 @@ public class Encoder implements Visitor{
 		this.level = 0;
 		this.contIfElse = 0;
 		this.idMap = new HashMap<String, IdentifierLocation>();
+		this.functionInstructions = new ArrayList<Instruction>();
 	}
 	
 	public void encode(AST a){
@@ -64,7 +66,7 @@ public class Encoder implements Visitor{
 	}
 	
 	private void createFile(){
-		String input = Properties.sourceCodeLocation; 
+		String input = Properties.sourceCodeLocation;
 		String output = (input.substring(0, input.lastIndexOf('.')+1)).concat("asm");
 
 		file = new Arquivo(input,output);
@@ -79,42 +81,42 @@ public class Encoder implements Visitor{
 		file.close();
 	}
 	
-	public void emit(int operationCode){
-		instructions.add(new Instruction(operationCode, null, null, null));
+	public void emit(int operationCode, ArrayList<Instruction> instructionList){
+		instructionList.add(new Instruction(operationCode, null, null, null));
 	}
 	
-	public void emit(int operationCode, String op1){
-		instructions.add(new Instruction(operationCode,op1,null,null));
+	public void emit(int operationCode, String op1, ArrayList<Instruction> instructionList){
+		instructionList.add(new Instruction(operationCode,op1,null,null));
 	}
 	
-	public void emit(int operationCode, String op1,String op2){
-		instructions.add(new Instruction(operationCode,op1,op2,null));
+	public void emit(int operationCode, String op1,String op2, ArrayList<Instruction> instructionList){
+		instructionList.add(new Instruction(operationCode,op1,op2,null));
 	}
 	
-	public void emit(int operationCode, String op1, String op2, String op3){
-		instructions.add(new Instruction(operationCode,op1,op2,op3));
+	public void emit(int operationCode, String op1, String op2, String op3, ArrayList<Instruction> instructionList){
+		instructionList.add(new Instruction(operationCode,op1,op2,op3));
 	}
 	
-	public void emit(int position, int operationCode, String op1,String op2){
-		instructions.add(position,new Instruction(operationCode,op1,op2,null));
+	public void emit(int position, int operationCode, String op1,String op2, ArrayList<Instruction> instructionList){
+		instructionList.add(position,new Instruction(operationCode,op1,op2,null));
 	}
 	
 	private void insertHeader(){
-		emit(InstructionType.BLOCKS_SEPARATOR);
+		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
 		// Importando Printf
-		emit(InstructionType.EXTERN,InstructionType.PRINTF);
-		emit(InstructionType.BLOCKS_SEPARATOR);
+		emit(InstructionType.EXTERN,InstructionType.PRINTF, instructions);
+		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
 		// Section Data
-		emit(InstructionType.SECTION, InstructionType.DATA);
-		emit(InstructionType.INT_FORMAT);
-		emit(InstructionType.BLOCKS_SEPARATOR);
+		emit(InstructionType.SECTION, InstructionType.DATA, instructions);
+		emit(InstructionType.INT_FORMAT, instructions);
+		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
 		// Section Text
-		emit(InstructionType.SECTION, InstructionType.TEXT);
-		emit(InstructionType.GLOBAL, InstructionType.WINMAIN);
-		emit(InstructionType.BLOCKS_SEPARATOR);
+		emit(InstructionType.SECTION, InstructionType.TEXT, instructions);
+		emit(InstructionType.GLOBAL, InstructionType.WINMAIN, instructions);
+		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 	}
 	
 	public Object visitRoot(Root root, Object obj) throws SemanticException{
@@ -123,7 +125,7 @@ public class Encoder implements Visitor{
 		//Gerando informações pré-código - 'cabeçalho'
 		insertHeader();
 		//Gerando label do main
-		emit(InstructionType.FUNCTION_LABEL, InstructionType.WINMAIN);
+		emit(InstructionType.FUNCTION_LABEL, InstructionType.WINMAIN, instructions);
 		
 		ArrayList<Program> programList = root.getPrograms();
 		
@@ -153,11 +155,10 @@ public class Encoder implements Visitor{
 	@Override
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand, Object obj) throws SemanticException{
 		
+		// Resultado de expressão em EAX
+		assignmentCommand.getExpression().visit(this, obj);
+		
 		assignmentCommand.getId().visit(this, obj);
-		
-		// considerando que o visit do expression empilhará o resultado
-		assignmentCommand.getExpression().visit(this, obj);		
-		
 		if (obj instanceof FunctionDeclaration){
 			
 		}else{
@@ -169,9 +170,12 @@ public class Encoder implements Visitor{
 	
 	// Acho que só precisamos mandar aqui pra verificar se o comando vem de uma decla de funcao
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException {
+		functionInstructions = new ArrayList<Instruction>();
+		
 		Identifier id = functionDeclaration.getIdentifier();
 		id.visit(this, obj);
-		emit (InstructionType.FUNCTION_LABEL, id.getSpelling());
+		
+		emit (InstructionType.FUNCTION_LABEL, id.getSpelling(), functionInstructions);
 		
 		for (int i=functionDeclaration.getParameters().size(); i>0;i--){
 			//...
@@ -212,8 +216,14 @@ public class Encoder implements Visitor{
 	@Override
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj)
 			throws SemanticException {
+		
 		printCommand.getExpression().visit(this, obj);
-		emit(InstructionType.CALL_FUNCTION, InstructionType.PRINTF);
+		
+		ArrayList<Instruction> destiny = instructions;
+		if(obj instanceof FunctionDeclaration)
+			destiny = functionInstructions;
+		
+		emit(InstructionType.CALL_FUNCTION, InstructionType.PRINTF, destiny);
 		return null;
 	}
 
@@ -289,22 +299,37 @@ public class Encoder implements Visitor{
 		 *  considerando que os resultados das expressões já foram empilhados
 		 *  só precisamos verificar qual o tipo da operação que deverá ser feita
 		 */
+		
+		ArrayList<Instruction> destiny = instructions;
+		if(obj instanceof FunctionDeclaration)
+			destiny = functionInstructions;
+		
 		switch (operatorKind) {
 			case GrammarSymbols.MINUS:
-				emit(InstructionType.SUB, InstructionType.EAX, InstructionType.EBX);
+				emit(InstructionType.SUB, InstructionType.EAX, InstructionType.EBX, destiny);
 				break;
 			case GrammarSymbols.PLUS:
-				emit(InstructionType.ADD, InstructionType.EAX, InstructionType.EBX);
+				emit(InstructionType.ADD, InstructionType.EAX, InstructionType.EBX, destiny);
 				break;
 			case GrammarSymbols.MULTIPLICATION:
-				emit(InstructionType.MULT, InstructionType.EAX, InstructionType.EBX);
+				emit(InstructionType.MULT, InstructionType.EAX, InstructionType.EBX, destiny);
 				break;
 			case GrammarSymbols.DIVISION:
-				emit(InstructionType.DIV, InstructionType.EAX, InstructionType.EBX);
+				emit(InstructionType.DIV, InstructionType.EAX, InstructionType.EBX, destiny);
 				break;
 		}
 
 		return null;
+	}
+	
+	private void openScope(ArrayList<Instruction> instructionList){
+		emit(InstructionType.PUSH, InstructionType.EBP, instructionList);
+		emit(InstructionType.MOV, InstructionType.EBP, InstructionType.ESP, instructionList);
+	}
+	
+	private void closeScope(ArrayList<Instruction> instructionList){
+		emit(InstructionType.MOV, InstructionType.ESP, InstructionType.EBP, instructionList);
+		emit(InstructionType.POP, InstructionType.EBP, instructionList);
 	}
 	
 	private void increaseLevel(){
