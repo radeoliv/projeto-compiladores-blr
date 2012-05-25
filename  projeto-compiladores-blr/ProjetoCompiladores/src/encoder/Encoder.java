@@ -103,7 +103,7 @@ public class Encoder implements Visitor{
 	private void insertHeader(){
 		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
-		// Importando Printf
+		// Importando Printf 
 		emit(InstructionType.EXTERN,InstructionType.PRINTF, instructions);
 		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
