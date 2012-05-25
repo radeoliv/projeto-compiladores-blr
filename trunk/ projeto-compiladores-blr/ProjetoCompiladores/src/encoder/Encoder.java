@@ -33,10 +33,13 @@ public class Encoder implements Visitor{
 	
 	//A seção de função (declarações de funções) sempre vem após o cabeçalho. Como este não muda, o tamanho é constante.
 	public static final int FUNCTION_SECTION = 9;
+	
 	//Deslocamento sempre é multiplo de 4 (tratamento apenas para inteiros) 
 	private static final int OFFSET = 4;
+	
 	//TODO: Verificar pushes na pilha
 	private int relativeOffset;
+	
 	private ArrayList<Instruction> instructions;
 	private Arquivo file;
 	private int level;
@@ -97,8 +100,13 @@ public class Encoder implements Visitor{
 		instructionList.add(new Instruction(operationCode,op1,op2,op3));
 	}
 	
+	//TODO: Provavelmente sem uso!
 	public void emit(int position, int operationCode, String op1,String op2, ArrayList<Instruction> instructionList){
 		instructionList.add(position,new Instruction(operationCode,op1,op2,null));
+	}
+	
+	public void emit(ArrayList<Instruction> source, ArrayList<Instruction> destiny){
+		destiny.addAll(FUNCTION_SECTION, source);
 	}
 	
 	private void insertHeader(){
@@ -119,8 +127,7 @@ public class Encoder implements Visitor{
 		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 	}
 	
-	public Object visitRoot(Root root, Object obj) throws SemanticException{
-		// startSectionData = instructions.size();
+	public Object visitRoot(Root root, Object obj) throws SemanticException {
 		
 		//Gerando informações pré-código - 'cabeçalho'
 		insertHeader();
@@ -130,10 +137,7 @@ public class Encoder implements Visitor{
 		ArrayList<Program> programList = root.getPrograms();
 		
 		for(Program program : programList){
-			
-			//TODO: Por que raios o root está sendo passado como parametro?
-			//program.visit(this, null);
-			program.visit(this, root);
+			program.visit(this, null);
 		}
 
 		return null;
@@ -163,42 +167,55 @@ public class Encoder implements Visitor{
 		}
 		if(!idMap.containsKey(assignmentCommand.getId().getSpelling()))
 		{
+			//Primeira vez que o identificador aparece
 			assignmentCommand.getId().visit(this, obj);
 		} 
 		else
-		{
-			IdentifierLocation il = idMap.get(assignmentCommand.getId().getSpelling());
-			
-			//EDX possui o valor do EBX do Identificador 
-			reachIdentifier(il, destiny);
-			
+		{			
 			// Resultado de expressão em EAX
 			assignmentCommand.getExpression().visit(this, obj);
 			
+			IdentifierLocation il = idMap.get(assignmentCommand.getId().getSpelling());
+			
+			//EDX aponta para o EBP do frame do Identificador 
+			reachIdentifier(il, destiny);
+			
 			// Joga valor de EAX na posição do identificador encontrado em EDX
-			emit(InstructionType.POP, "dword",InstructionType.EDX, il.getOffset()+"", destiny);
+			emit(InstructionType.POP, InstructionType.POP_REG_OFFSET+"", InstructionType.EDX, il.getOffset()+"", destiny);
 		}
 		
 		return null;
 	}
 	
-	// Acho que só precisamos mandar aqui pra verificar se o comando vem de uma decla de funcao
 	public Object visitFunctionDeclaration(FunctionDeclaration functionDeclaration, Object obj) throws SemanticException {
-		functionInstructions = new ArrayList<Instruction>();
+		//Limpando lista de instruções de função
+		functionInstructions = new ArrayList<Instruction>();		
 		
 		Identifier id = functionDeclaration.getIdentifier();
+		
+		//Armazena informações do identificador da FunctionDeclaration
 		id.visit(this, obj);
 		
 		emit (InstructionType.LABEL, id.getSpelling(), functionInstructions);
 		openScope(functionInstructions);		
 		
-		for (int i=functionDeclaration.getParameters().size(); i>0;i--){
-			//...
+		ArrayList<Command> commands = functionDeclaration.getCommands(); 
+		for(Command c : commands){
+			c.visit(this, obj);
 		}
 		
+		//Se possuir um retorno, o valor da expressão é jogado em EAX
+		Expression ret = functionDeclaration.getReturnExp(); 
+		if(ret != null){
+			ret.visit(this, obj);
+		}
 		
-		return functionDeclaration;
-		//TODO: unimplemented
+		closeScope(functionInstructions);
+		emit(InstructionType.RET, functionInstructions);
+		emit(InstructionType.BLOCKS_SEPARATOR, functionInstructions);
+		emit(functionInstructions, instructions);
+		
+		return null;
 	}
 	
 	@Override
@@ -311,8 +328,10 @@ public class Encoder implements Visitor{
 			// Adicionar no final do array de instruções (main)
 			destiny = instructions;
 		}
+		
 		ArrayList<Expression> arguments = procedureCall.getArguments(); 
 		int qntArguments = arguments.size();
+		
 		Collections.reverse(arguments);
 		for (Expression e : arguments){
 			e.visit(this, obj);
@@ -506,14 +525,14 @@ public class Encoder implements Visitor{
 	}
 	
 	private void openScope(ArrayList<Instruction> instructionList){
-		emit(InstructionType.PUSH, InstructionType.EBP, instructionList);
+		emit(InstructionType.PUSH, InstructionType.PUSH_REG_ADDRESS+"", InstructionType.EBP, instructionList);
 		emit(InstructionType.MOV, InstructionType.EBP, InstructionType.ESP, instructionList);
 		increaseLevel();
 	}
 	
 	private void closeScope(ArrayList<Instruction> instructionList){
 		emit(InstructionType.MOV, InstructionType.ESP, InstructionType.EBP, instructionList);
-		emit(InstructionType.POP, InstructionType.EBP, instructionList);
+		emit(InstructionType.POP, InstructionType.POP_REG+"", InstructionType.EBP, instructionList);
 		decreaseLevel();
 	}
 	
@@ -529,15 +548,12 @@ public class Encoder implements Visitor{
 		
 		int diff = this.level - il.getLevel();
 		
-		//EDX aponta para o EBP atual
-		emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
-		for(int i=0; i<diff; i++){
-			//Pegando EBP antigo: push dword [ebp+4]
-			emit(InstructionType.PUSH, "dword" , InstructionType.EDX, "+4", destiny);
-			//Fazendo ECX ir para a posição antiga do EBP
-			emit(InstructionType.POP, InstructionType.ECX, destiny);
-			//Atualiza o valor de EDX para onde ECX aponta (EBP antigo)
-			emit(InstructionType.MOV, InstructionType.EDX, InstructionType.ECX, destiny);
+		emit(InstructionType.MOV, InstructionType.ECX, InstructionType.EBP, destiny);
+		for(int i=0; i<diff; i++){	
+			emit(InstructionType.PUSH, InstructionType.PUSH_REG_VALUE+"", InstructionType.EBP, destiny);
+			emit(InstructionType.POP, InstructionType.POP_REG+"", InstructionType.EBP, destiny);
+			emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
 		}
+		emit(InstructionType.MOV, InstructionType.EBP, InstructionType.ECX, destiny);
 	}
 }

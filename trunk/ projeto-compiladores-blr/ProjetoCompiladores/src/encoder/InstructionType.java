@@ -43,6 +43,14 @@ public interface InstructionType {
 	//public static final String WORD_MULT = "imul";
 	//public static final String WORD_DIV = "idiv";
 	
+	public static final int PUSH_REG_ADDRESS = 99;	//push eax
+	public static final int PUSH_REG_VALUE = 98;	//push [eax]
+	public static final int PUSH_CONSTANT = 97;		//push dword 1
+	public static final int PUSH_REG_OFFSET = 96;	//push dword [eax+8]
+	
+	public static final int POP_REG = 95;			//pop eax
+	public static final int POP_REG_OFFSET = 94;	//pop dword [ebp-8]
+	
 	public static final String JNE = "jne"; //Jump if Not Equal
 	public static final String JE = "je"; 	//Jump if Equal
 	public static final String JZ = "jz";	//Jump if Zero
