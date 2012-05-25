@@ -26,7 +26,7 @@ public class Instruction {
 			case InstructionType.GLOBAL:
 				return ("global "+ this.op1);
 				
-			case InstructionType.FUNCTION_LABEL:
+			case InstructionType.LABEL:
 				if(this.op1.equals(InstructionType.WINMAIN)){
 					return(InstructionType.WINMAIN+":");
 				}else{
@@ -52,7 +52,10 @@ public class Instruction {
 				return ("ret");
 				
 			case InstructionType.JMP:
-				return ("jmp "+this.op1+":");
+				return ("jmp "+this.op1);
+				
+			case InstructionType.CONDITIONAL_JUMP:
+				return (this.op1+" "+this.op2);
 				
 			case InstructionType.ADD:
 				return ("add "+this.op1+", "+this.op2);
@@ -79,16 +82,15 @@ public class Instruction {
 	
 
 	private String iPush(){
-		//op1, caso exista, será usado sempre para passar o tipo int.
+		//op1, dword
 		//op2 é o registrador/valor que será inserido na pilha
 		//op3, caso exista, é o deslocamento associado a um registrador
 		
-		if(this.op1 != null && this.op1.equals("int")){
-			if(this.op3 == null || this.op3.equals("")){
+		if(this.op1 != null){
+			if(this.op3 == null){
 				//Usado para constantes 
 				//Ex: push dword 0
 				return ("push dword "+this.op2);
-				//return ("push "+InstructionType.DWORD+" "+this.op2);
 			}else{
 				//Usado para registradores + deslocamentos
 				//Ex: push dword [ebp+4]
@@ -106,10 +108,11 @@ public class Instruction {
 		//op2 é o registrador/valor que será inserido na pilha
 		//op3, caso exista, é o deslocamento associado a um registrador	
 		
-		if(this.op1 != null && this.op1.equals("int"))
+		if(this.op1 != null)
 			//Usado para registradores + deslocamentos
 			//Ex: pop dword [ebp+4]
 			return ("pop dword ["+this.op2+"+"+this.op3+"]");
+			
 		else
 			//Usado para registradores
 			//Ex: pop ebp
