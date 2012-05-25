@@ -82,41 +82,35 @@ public class Instruction {
 	
 
 	private String iPush(){
-		//op1, dword
-		//op2 é o registrador/valor que será inserido na pilha
+		//op1, contantes de tipo de push
+		//op2 é o registrador/constante que será inserido na pilha
 		//op3, caso exista, é o deslocamento associado a um registrador
 		
-		if(this.op1 != null){
-			if(this.op3 == null){
-				//Usado para constantes 
-				//Ex: push dword 0
-				return ("push dword "+this.op2);
-			}else{
-				//Usado para registradores + deslocamentos
-				//Ex: push dword [ebp+4]
-				return ("push dword ["+this.op2+"+"+this.op3+"]");
-			}
-		} else {
-			//Usado para registradores
-			//Ex: push ebp
-			return ("push "+this.op2);
+		if(op1.equals(InstructionType.PUSH_REG_OFFSET)){
+			return ("push dword ["+op2+op3+"]");
+		} else if(op1.equals(InstructionType.PUSH_CONSTANT)){
+			return ("push dword "+op2);
+		} else if(op1.equals(InstructionType.PUSH_REG_ADDRESS)){
+			return ("push "+op2);
+		} else if(op1.equals(InstructionType.PUSH_REG_VALUE)){
+			return ("push ["+op2+"]");
 		}
+		return null;
+
 	}
 	
 	private String iPop(){
-		//op1, caso exista, será usado sempre para passar o tipo int.
-		//op2 é o registrador/valor que será inserido na pilha
+		//op1, contantes de tipo de pop
+		//op2 é o registrador destino
 		//op3, caso exista, é o deslocamento associado a um registrador	
 		
-		if(this.op1 != null)
-			//Usado para registradores + deslocamentos
-			//Ex: pop dword [ebp+4]
-			return ("pop dword ["+this.op2+"+"+this.op3+"]");
-			
-		else
-			//Usado para registradores
-			//Ex: pop ebp
-			return ("pop "+this.op2);
+		if(this.op1.equals(InstructionType.POP_REG)){
+			return ("pop "+op2);
+		} else if(this.op1.equals(InstructionType.POP_REG_OFFSET)){
+			return ("pop dword ["+op2+op3+"]");
+		}
+		
+		return null;
 	}
 	
 	
