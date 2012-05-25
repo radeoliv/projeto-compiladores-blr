@@ -37,23 +37,25 @@ public class Encoder implements Visitor{
 	
 	//A seção de função (declarações de funções) sempre vem após o cabeçalho. Como este não muda, o tamanho é constante.
 	public static final int FUNCTION_SECTION = 9;
-	
+	//Deslocamento sempre é multiplo de 4 (tratamento apenas para inteiros) 
+	private static final int OFFSET = 4;
 	private ArrayList<Instruction> instructions;
-	
 	private Arquivo file;
-	private static final int DESLOCAMENTO = 4;
+	private int level;
+	private int contIfElse;
 	
 	// Necessário?
 	//private int startSectionData = 0;
 
-	//Contadores
-	private int contIfElse;
 	
-	
-	public Encoder(){}
+	public Encoder(){
+		this.instructions = new ArrayList<Instruction>();
+		//Nível principal (da main) é 0
+		this.level = 0;
+		this.contIfElse = 0;
+	}
 	
 	public void encode(AST a){
-		instructions = new ArrayList<Instruction>();
 		try {
 			a.visit(this, null);
 			createFile();
@@ -127,9 +129,6 @@ public class Encoder implements Visitor{
 		ArrayList<Program> programList = root.getPrograms();
 		
 		for(Program program : programList){
-			// Pq Nadile passa o primeiro argumento e não obj e todos os visit?
-			// pra saber se é global ou não?
-			//WTF?!
 			
 			//TODO: Por que raios o root está sendo passado como parametro?
 			//program.visit(this, null);
@@ -220,7 +219,7 @@ public class Encoder implements Visitor{
 	public Object visitPrintCommand(PrintCommand printCommand, Object obj)
 			throws SemanticException {
 		printCommand.getExpression().visit(this, obj);
-		emit(InstructionType.CALL_FUNCTION, InstructionType.PRINTF);		
+		emit(InstructionType.CALL_FUNCTION, InstructionType.PRINTF);
 		return null;
 	}
 
@@ -236,13 +235,10 @@ public class Encoder implements Visitor{
 	public Object visitBinaryExpression(BinaryExpression binaryExpression,
 			Object obj) throws SemanticException {
 		
-		/*
-		 * push exp1
-		 * push exp2
-		 * op
-		 */
-		
-		// empilha resultado leftExpression
+		//Nó esquerda = eax
+		// Nó direita = ebx
+		//visit operator
+		// empilha resultado leftExpression (push eax)
 		binaryExpression.getLeftExpression().visit(this, obj);
 		
 		// empilha resultado rightExpression
@@ -301,23 +297,28 @@ public class Encoder implements Visitor{
 		 *  só precisamos verificar qual o tipo da operação que deverá ser feita
 		 */
 		switch (operatorKind) {
-		case GrammarSymbols.MINUS:
-			emit(InstructionType.SUB);
-			break;
-		case GrammarSymbols.PLUS:
-			emit(InstructionType.ADD);
-			break;
-		case GrammarSymbols.MULTIPLICATION:
-			emit(InstructionType.MULT);
-			break;
-		case GrammarSymbols.DIVISION:
-			emit(InstructionType.DIV);
-			break;
-		default:
-			break;
+			case GrammarSymbols.MINUS:
+				emit(InstructionType.SUB, InstructionType.EAX, InstructionType.EBX);
+				break;
+			case GrammarSymbols.PLUS:
+				emit(InstructionType.ADD, InstructionType.EAX, InstructionType.EBX);
+				break;
+			case GrammarSymbols.MULTIPLICATION:
+				emit(InstructionType.MULT, InstructionType.EAX, InstructionType.EBX);
+				break;
+			case GrammarSymbols.DIVISION:
+				emit(InstructionType.DIV, InstructionType.EAX, InstructionType.EBX);
+				break;
 		}
 
 		return null;
 	}
-
+	
+	private void increaseLevel(){
+		this.level++;
+	}
+	
+	private void decreaseLevel(){
+		this.level--;
+	}
 }
