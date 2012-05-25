@@ -128,7 +128,7 @@ public class Backup implements Visitor {
 		
 		com.getFunctionName().visit(this, com);
 		Identifier id = com.getFunctionName();
-		emit(InstructionType.FUNCTION_LABEL,id.getSpelling());
+		emit(InstructionType.LABEL,id.getSpelling());
 		
 		int deslocamento=4;
 		for(int i=(com.getParameters().size()-1);i>=0;i--){
@@ -345,13 +345,13 @@ public class Backup implements Visitor {
 				s.visit(this, arg);
 			}
 			String labelElse = fd.getFunctionName().getSpelling()+'_'+"else_"+contIfElse+"_block";
-			emit(InstructionType.FUNCTION_LABEL, labelElse);
+			emit(InstructionType.LABEL, labelElse);
 			
 			for(Statement s: statement.getElseStatements()){
 				s.visit(this, arg);
 			}
 			String label = fd.getFunctionName().getSpelling()+'_'+"endIf_"+contIfElse;
-			emit(InstructionType.FUNCTION_LABEL, label);
+			emit(InstructionType.LABEL, label);
 			contIfElse++;
 		}
 		return null;
