@@ -14,35 +14,19 @@ public interface InstructionType {
 	public static final int RET = 9;
 	public static final int JMP = 10;
 	public static final int CONDITIONAL_JUMP = 11;
-	//public static final int VARIAVEL_GLOBAL = 4;
 		
 	public static final int ADD = 12;
 	public static final int SUB = 13;
 	public static final int MULT = 14;
 	public static final int DIV = 15;
 	public static final int INT_FORMAT = 16;
-	public static final int BLOCKS_SEPARATOR = 17;
-	
+	public static final int BLOCKS_SEPARATOR = 17;	
 	
 	public static final String PRINTF = "_printf";
 	public static final String DATA = ".data";
 	public static final String TEXT = ".text";
 	public static final String WINMAIN = "_WinMain@16";
-	//public static final String NAME_EXTERN = "extern";
-	//public static final String NAME_SECTION = "SECTION";
-	//public static final String CALL = "call";
-	
-
-	//public static final String NAME_PUSH = "push";
-	//public static final String WORD_POP = "pop";
-	//public static final String NAME_MOV = "mov";
-	//public static final String NAME_RET = "ret";
-	
-	//public static final String WORD_ADD = "add";
-	//public static final String WORD_SUB = "sub";
-	//public static final String WORD_MULT = "imul";
-	//public static final String WORD_DIV = "idiv";
-	
+		
 	public static final int PUSH_REG_ADDRESS = 99;	//push eax
 	public static final int PUSH_REG_VALUE = 98;	//push [eax]
 	public static final int PUSH_CONSTANT = 97;		//push dword 1

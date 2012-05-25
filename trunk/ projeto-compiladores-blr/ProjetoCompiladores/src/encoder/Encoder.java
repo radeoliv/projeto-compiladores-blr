@@ -41,21 +41,23 @@ public class Encoder implements Visitor{
 	private int relativeOffset;
 	
 	private ArrayList<Instruction> instructions;
+	private ArrayList<Instruction> functionInstructions;
 	private Arquivo file;
+	
+	private HashMap<String, IdentifierLocation> idMap;
 	private int level;
 	private int contIfElse;
 	private int contWhile;
-	private HashMap<String, IdentifierLocation> idMap;
-	private ArrayList<Instruction> functionInstructions;
 
 	public Encoder(){
 		this.instructions = new ArrayList<Instruction>();
+		this.functionInstructions = new ArrayList<Instruction>();
+		this.idMap = new HashMap<String, IdentifierLocation>();
 		//Nível principal (da main) é 0
 		this.level = 0;
 		this.contIfElse = 0;
 		this.contWhile = 0;
-		this.idMap = new HashMap<String, IdentifierLocation>();
-		this.functionInstructions = new ArrayList<Instruction>();
+		
 		this.relativeOffset = 0;
 	}
 	
@@ -101,9 +103,9 @@ public class Encoder implements Visitor{
 	}
 	
 	//TODO: Provavelmente sem uso!
-	public void emit(int position, int operationCode, String op1,String op2, ArrayList<Instruction> instructionList){
-		instructionList.add(position,new Instruction(operationCode,op1,op2,null));
-	}
+	//public void emit(int position, int operationCode, String op1,String op2, ArrayList<Instruction> instructionList){
+	//	instructionList.add(position,new Instruction(operationCode,op1,op2,null));
+	//}
 	
 	public void emit(ArrayList<Instruction> source, ArrayList<Instruction> destiny){
 		destiny.addAll(FUNCTION_SECTION, source);
@@ -133,13 +135,16 @@ public class Encoder implements Visitor{
 		insertHeader();
 		//Gerando label do main
 		emit(InstructionType.LABEL, InstructionType.WINMAIN, instructions);
-		
+		openScope(instructions);
+				
 		ArrayList<Program> programList = root.getPrograms();
 		
 		for(Program program : programList){
 			program.visit(this, null);
 		}
-
+		closeScope(instructions);
+		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
+		
 		return null;
 	}
 	
@@ -158,6 +163,9 @@ public class Encoder implements Visitor{
 	
 	@Override
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand, Object obj) throws SemanticException{
+		// TODO No código dele, depois do label da main ele aloca espaço pra variáveis que aparecem dentro da main
+		//sub esp, 16 ; Aloca espaço para variáveis locais: 1 double e 2 int = 16 bytes
+		
 		ArrayList<Instruction> destiny = null;		
 		
 		if (obj instanceof FunctionDeclaration){
@@ -165,13 +173,12 @@ public class Encoder implements Visitor{
 		}else{
 			destiny = instructions;
 		}
-		if(!idMap.containsKey(assignmentCommand.getId().getSpelling()))
-		{
+		
+		if(!idMap.containsKey(assignmentCommand.getId().getSpelling())) {
 			//Primeira vez que o identificador aparece
 			assignmentCommand.getId().visit(this, obj);
-		} 
-		else
-		{			
+			//TODO Mas a primeira vez que ele aparece tb tem uma expressão à direita
+		}else{			
 			// Resultado de expressão em EAX
 			assignmentCommand.getExpression().visit(this, obj);
 			
@@ -209,10 +216,12 @@ public class Encoder implements Visitor{
 		if(ret != null){
 			ret.visit(this, obj);
 		}
-		
+		// TODO Ele tava emitindo a instrução de retorno toda vez... E se for procedimento?
 		closeScope(functionInstructions);
-		emit(InstructionType.RET, functionInstructions);
+		if (ret!=null)
+			emit(InstructionType.RET, functionInstructions);
 		emit(InstructionType.BLOCKS_SEPARATOR, functionInstructions);
+		// Adiciona essa função no array que contém todas as instruções do arquivo
 		emit(functionInstructions, instructions);
 		
 		return null;
@@ -246,7 +255,7 @@ public class Encoder implements Visitor{
 		whileCommand.getExpression().visit(this, obj);
 		
 		// Jump de acordo com a condição
-		emit(InstructionType.CONDITIONAL_JUMP, whatJump(op),label+"_end" , destiny);
+		emit(InstructionType.CONDITIONAL_JUMP, whatJump(op.getSpelling()),label+"_end" , destiny);
 		
 		// Avaliação de comandos
 		for (Command cmd : whileCommand.getCommands()){
@@ -266,27 +275,27 @@ public class Encoder implements Visitor{
 	public Object visitIfCommand(IfCommand ifCommand, Object obj) throws SemanticException {
 		ArrayList<Instruction> destiny;
 		String label;
+		// TODO Ele tá se confundindo todooo
 		contIfElse++;
+		ArrayList <Command> elseCommands = ifCommand.getElseCommands();
 		
 		if (obj instanceof FunctionDeclaration){
-			// Adicionar para uma função
 			destiny = functionInstructions;
 			label = ((FunctionDeclaration)obj).getIdentifier().getSpelling();
-			
 		}else{
-			// Adicionar no final do array de instruções
 			destiny = instructions;
 			label = "main";
 		}
-		// Label início do if
+		
+		// Início do if
+		// TODO label para if e while não começa com _
 		emit(InstructionType.LABEL, label+"_if_"+contIfElse+"_begin", destiny);
 		openScope(destiny);
-		
 		Operator op = ((BinaryExpression)ifCommand.getExpression()).getOperator();
-		// Avaliação da Expressão
 		ifCommand.getExpression().visit(this, obj);
+		
 		// Jump para o else de acordo com a condição
-		emit(InstructionType.CONDITIONAL_JUMP, whatJump(op),label+"_else_"+contIfElse+"_begin" , destiny);
+		emit(InstructionType.CONDITIONAL_JUMP, whatJump(op.getSpelling()),label+"_else_"+contIfElse+"_begin" , destiny);
 		
 		// Avaliação de comandos do if
 		for (Command cmdIf : ifCommand.getIfCommands()){
@@ -294,25 +303,24 @@ public class Encoder implements Visitor{
 		}
 		
 		closeScope(destiny);
-		
-		// Jump para o fim do else caso o if tenha sido executado
+		// Jump para o fim do else
 		emit(InstructionType.JMP, label+"_else_"+contIfElse+"_end" , destiny);
 		// Fim do if
 		emit(InstructionType.LABEL, label+"_if_"+contIfElse+"_end", destiny);
 		
 		// Começo do else
-		emit(InstructionType.LABEL, label+"_else_"+contIfElse+"_begin" , destiny);
-		openScope(destiny);
-		
-		// Avaliação de comandos do else
-		for (Command cmdElse : ifCommand.getElseCommands()){
-			cmdElse.visit(this, obj);
-		}
-		
-		// Fim do else
-		closeScope(destiny);
-		emit(InstructionType.LABEL, label+"_else_"+contIfElse+"_end" , destiny);
-		
+			emit(InstructionType.LABEL, label+"_else_"+contIfElse+"_begin" , destiny);
+			openScope(destiny);
+			
+			// Avaliação de comandos do else
+			for (Command cmdElse : elseCommands){
+				cmdElse.visit(this, obj);
+			}
+				
+			// Fim do else
+			closeScope(destiny);
+			emit(InstructionType.LABEL, label+"_else_"+contIfElse+"_end" , destiny);
+			
 		return null;
 	}
 	
@@ -332,13 +340,16 @@ public class Encoder implements Visitor{
 		ArrayList<Expression> arguments = procedureCall.getArguments(); 
 		int qntArguments = arguments.size();
 		
+		// TODO Rever isso aqui
 		Collections.reverse(arguments);
 		for (Expression e : arguments){
 			e.visit(this, obj);
 		}
 		emit(InstructionType.CALL_FUNCTION,"_"+functionName,destiny);
 		// Desloca esp devido os argumentos
-		emit(InstructionType.ADD, InstructionType.ESP, (qntArguments*OFFSET)+"", destiny);
+		// TODO Ele tava gerando a instrução add esp, 0
+		if (qntArguments != 0)
+			emit(InstructionType.ADD, InstructionType.ESP, (qntArguments*OFFSET)+"", destiny);
 		
 		return null;
 	}
@@ -364,8 +375,13 @@ public class Encoder implements Visitor{
 	}
 
 	@Override
-	public Object visitPrintCommand(PrintCommand printCommand, Object obj)
-			throws SemanticException {
+	public Object visitPrintCommand(PrintCommand printCommand, Object obj) throws SemanticException {
+		
+		/* TODO No código dele tem assim sempre que aparece um printf
+		push dword [a] ; Empilha o valor de a
+	    push dword intFormat ; Empilha o formato do printf para int
+	    call _printf ; Chama a função externa printf (C)
+	    add esp, 8 ; Libera o espaço dos dois parâmetros*/
 		
 		printCommand.getExpression().visit(this, obj);
 		
@@ -377,27 +393,26 @@ public class Encoder implements Visitor{
 		return null;
 	}
 
-	
+	// Larissa
 	@Override
-	public Object visitParameter(Parameter parameter, Object obj)
-			throws SemanticException {
-		// TODO Auto-generated method stub
+	public Object visitParameter(Parameter parameter, Object obj) throws SemanticException {
+		parameter.getIdentifier().visit(this, obj);
 		return null;
 	}
 	
+	// Larissa
 	@Override
-	public Object visitBinaryExpression(BinaryExpression binaryExpression,
-			Object obj) throws SemanticException {
-		//TODO: unimplemented
-		//Nó esquerda = eax
-		// Nó direita = ebx
-		//visit operator
+	public Object visitBinaryExpression(BinaryExpression binaryExpression,Object obj) throws SemanticException {
+		//TODO: não sei se será assim	
+		
+		ArrayList<Instruction> destiny = instructions;
+		if(obj instanceof FunctionDeclaration)
+			destiny = functionInstructions;
+		// Tem que colocar a let pra eax e a right para ebx e gravar o resultado em eax pra colocar na pilha
 		// empilha resultado leftExpression (push eax)
 		binaryExpression.getLeftExpression().visit(this, obj);
-		
 		// empilha resultado rightExpression
 		binaryExpression.getRightExpression().visit(this, obj);
-		
 		// realiza operação empilhando o resultado
 		binaryExpression.getOperator().visit(this, obj);
 		
@@ -408,6 +423,7 @@ public class Encoder implements Visitor{
 	public Object visitUnaryExpressionId(UnaryExpressionId unaryExpressionId,
 			Object obj) throws SemanticException {
 		// TODO Auto-generated method stub
+		// TODO Aqui vai ficar todo aquele esquema do reach
 		return null;
 	}
 
@@ -417,32 +433,38 @@ public class Encoder implements Visitor{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	// Larissa
 	@Override
-	public Object visitUnaryExpressionFunction(
-			UnaryExpressionFunction unaryExpressionFunction, Object obj)
-			throws SemanticException {
-
-		ArrayList<Instruction> destiny = instructions;
-		if(obj instanceof FunctionDeclaration)
-			destiny = functionInstructions;
-		
-		//TODO: visita identificador???????
-		unaryExpressionFunction.getIdentifier().visit(this, obj);
-		
-		ArrayList<Expression> arguments = unaryExpressionFunction.getArguments();
-		Collections.reverse(arguments);
-		for (Expression e : arguments){
-			// empilha os parametros
-			e.visit(this, null);
+	public Object visitUnaryExpressionFunction(UnaryExpressionFunction unaryExpressionFunction, Object obj) throws SemanticException {
+		ArrayList<Instruction> destiny;
+		String functionName = unaryExpressionFunction.getIdentifier().getSpelling();
+				
+		if (obj instanceof FunctionDeclaration){
+			// Adicionar para uma função
+			destiny = functionInstructions;			
+		}else{
+			// Adicionar no final do array de instruções (main)
+			destiny = instructions;
 		}
 		
-		String idFunction = unaryExpressionFunction.getIdentifier().getSpelling();
+		ArrayList<Expression> arguments = unaryExpressionFunction.getArguments(); 
+		int qntArguments = arguments.size();
 		
-		emit(InstructionType.LABEL, "_"+idFunction, destiny);
+		// TODO Rever isso aqui
+		Collections.reverse(arguments);
+		for (Expression e : arguments){
+			e.visit(this, obj);
+		}
 		
+		// TODO (não é toDo) -- Alguém tinha esquecido que para chamar função ou procedimento tem que colocar
+		// esse call, pq é de assembly. A pessoa tinha colocado pra criar um label... acho que ela confundiu
+		// com o call que nossa gramática exige
+		emit(InstructionType.CALL_FUNCTION,"_"+functionName,destiny);
 		// Desloca esp devido os argumentos
-		emit(InstructionType.ADD, InstructionType.ESP, (arguments.size()*OFFSET)+"", destiny);
+		// TODO Ele tava gerando a instrução add esp, 0
+		if (qntArguments != 0)
+			emit(InstructionType.ADD, InstructionType.ESP, (qntArguments*OFFSET)+"", destiny);
 		
 		return null;
 	}
@@ -497,9 +519,12 @@ public class Encoder implements Visitor{
 	}
 	
 	//Métodos extras
-	private String whatJump(Operator op){
+	/*private String whatJump(Operator op){
 		String jump = null;
 		
+		// TODO Ele não tá conseguindo entrar nos cases e tá retornando null
+		// Verifiquei e é por causa da passagem Qnd passo lá op.kind()) não pega
+		// Então esse kind não é oq a gente quer
 		switch (op.getKind()){
 		case GrammarSymbols.EQUALS:
 			jump = InstructionType.JNE;
@@ -522,7 +547,29 @@ public class Encoder implements Visitor{
 		
 		}
 		return jump;
+	}*/
+	
+	// Pensei numa solução
+	private String whatJump(String op){
+		String jump = null;
+	
+		if (op.equals("==")){
+			jump = InstructionType.JNE;
+		}else if (op.equals("~=")){
+			jump = InstructionType.JE;
+		}else if (op.equals(">")){
+			jump  = InstructionType.JLE;
+		}else if (op.equals(">=")){
+			jump = InstructionType.JL;
+		}else if (op.equals("<")){
+			jump = InstructionType.JGE;
+		}else{
+			jump = InstructionType.JG;
+		}
+				
+		return jump;
 	}
+		
 	
 	private void openScope(ArrayList<Instruction> instructionList){
 		emit(InstructionType.PUSH, InstructionType.PUSH_REG_ADDRESS+"", InstructionType.EBP, instructionList);
@@ -536,6 +583,7 @@ public class Encoder implements Visitor{
 		decreaseLevel();
 	}
 	
+	// TODO Dá pra colocar esses métodos como parte dos anteriores, afinal é uma linha
 	private void increaseLevel(){
 		this.level++;
 	}
@@ -552,6 +600,7 @@ public class Encoder implements Visitor{
 		for(int i=0; i<diff; i++){	
 			emit(InstructionType.PUSH, InstructionType.PUSH_REG_VALUE+"", InstructionType.EBP, destiny);
 			emit(InstructionType.POP, InstructionType.POP_REG+"", InstructionType.EBP, destiny);
+			// TODO Para que essa linha?
 			emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
 		}
 		emit(InstructionType.MOV, InstructionType.EBP, InstructionType.ECX, destiny);
