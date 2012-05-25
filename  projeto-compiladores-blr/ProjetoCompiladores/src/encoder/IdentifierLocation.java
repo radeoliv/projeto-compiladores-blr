@@ -3,12 +3,10 @@ package encoder;
 public class IdentifierLocation {
 	private int level;
 	private int offset;
-	private String spelling;
 	
-	public IdentifierLocation(int level, int offset, String spelling){
+	public IdentifierLocation(int level, int offset){
 		this.level = level;
 		this.offset = offset;
-		this.spelling = spelling;
 	}
 
 	public int getLevel() {
@@ -26,15 +24,4 @@ public class IdentifierLocation {
 	public void setOffset(int offset) {
 		this.offset = offset;
 	}
-
-	public String getSpelling() {
-		return spelling;
-	}
-
-	public void setSpelling(String spelling) {
-		this.spelling = spelling;
-	}
-	
-	
-	
 }

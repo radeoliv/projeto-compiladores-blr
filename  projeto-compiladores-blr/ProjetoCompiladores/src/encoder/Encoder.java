@@ -1,6 +1,7 @@
 package encoder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import parser.GrammarSymbols;
 
@@ -29,10 +30,6 @@ import classes.terminal.Identifier;
 import classes.terminal.Number;
 import classes.terminal.Operator;
 
-/*
- * Implementado: criação do cabeçalho do topo do arquivo gerado + visit de root, program.
- */
-
 public class Encoder implements Visitor{
 	
 	//A seção de função (declarações de funções) sempre vem após o cabeçalho. Como este não muda, o tamanho é constante.
@@ -43,6 +40,7 @@ public class Encoder implements Visitor{
 	private Arquivo file;
 	private int level;
 	private int contIfElse;
+	HashMap<String, IdentifierLocation> idMap;
 	
 	// Necessário?
 	//private int startSectionData = 0;
@@ -53,6 +51,7 @@ public class Encoder implements Visitor{
 		//Nível principal (da main) é 0
 		this.level = 0;
 		this.contIfElse = 0;
+		this.idMap = new HashMap<String, IdentifierLocation>();
 	}
 	
 	public void encode(AST a){
@@ -138,13 +137,9 @@ public class Encoder implements Visitor{
 		return null;
 	}
 	
-
 	public Object visitProgram(Program program, Object obj) throws SemanticException{
 		Command cmd = program.getCommand();
 		FunctionDeclaration fd = program.getFunction();
-		
-		// Temos que fazer algo para que os comandos sejam adicionados nessa área e funções na delas
-		// entao acho que temos que ter um cont aqui????
 		
 		if (cmd != null){
 			cmd.visit(this, null);
@@ -157,7 +152,6 @@ public class Encoder implements Visitor{
 	
 	@Override
 	public Object visitAssignmentCommand(AssignmentCommand assignmentCommand, Object obj) throws SemanticException{
-		
 		
 		assignmentCommand.getId().visit(this, obj);
 		
