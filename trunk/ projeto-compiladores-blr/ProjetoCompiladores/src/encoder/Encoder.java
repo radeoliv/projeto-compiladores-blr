@@ -276,8 +276,7 @@ public class Encoder implements Visitor{
 
 	@Override
 	public Object visitNumber(Number number, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		return number.getSpelling();
 	}
 
 	@Override
