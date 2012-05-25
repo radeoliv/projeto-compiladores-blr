@@ -23,5 +23,9 @@ public class Operator extends Terminal {
 	public int getKind(){
 		return super.token.getKind();
 	}
+	
+	public String getSpelling(){
+		return super.token.getSpelling();
+	}
 
 }

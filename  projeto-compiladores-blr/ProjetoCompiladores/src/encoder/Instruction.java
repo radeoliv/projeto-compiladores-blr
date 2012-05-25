@@ -1,7 +1,6 @@
 package encoder;
 
 public class Instruction {
-	// Mudar esse nomes seria cool
 	private int operationCode; 
 	private String op1; 
 	private String op2; 
@@ -82,35 +81,37 @@ public class Instruction {
 	
 
 	private String iPush(){
-		//op1, contantes de tipo de push
-		//op2 é o registrador/constante que será inserido na pilha
-		//op3, caso exista, é o deslocamento associado a um registrador
-		
-		if(op1.equals(InstructionType.PUSH_REG_OFFSET)){
+		// TODO Tava retornando null no arquivo
+		// Adicionei os "" nas comparações, se não tivesse... retornava errado
+		if(op1.equals(InstructionType.PUSH_REG_OFFSET+"")){
 			return ("push dword ["+op2+op3+"]");
-		} else if(op1.equals(InstructionType.PUSH_CONSTANT)){
+		} else if(op1.equals(InstructionType.PUSH_CONSTANT+"")){
 			return ("push dword "+op2);
-		} else if(op1.equals(InstructionType.PUSH_REG_ADDRESS)){
+		} else if(op1.equals(InstructionType.PUSH_REG_ADDRESS+"")){
 			return ("push "+op2);
-		} else if(op1.equals(InstructionType.PUSH_REG_VALUE)){
+		/*} else if(op1.equals(InstructionType.PUSH_REG_VALUE+"")){
+			return ("push ["+op2+"]");
+		}*/
+		}else{
 			return ("push ["+op2+"]");
 		}
-		return null;
+		//return null;
 
 	}
 	
 	private String iPop(){
-		//op1, contantes de tipo de pop
-		//op2 é o registrador destino
-		//op3, caso exista, é o deslocamento associado a um registrador	
-		
-		if(this.op1.equals(InstructionType.POP_REG)){
+		// TODO Tava retornando null no arquivo
+		// Adicionei os "" nas comparações, se não tivesse... retornava errado
+		if(this.op1.equals(InstructionType.POP_REG+"")){
 			return ("pop "+op2);
-		} else if(this.op1.equals(InstructionType.POP_REG_OFFSET)){
+		/*} else if(this.op1.equals(InstructionType.POP_REG_OFFSET+"")){
+			return ("pop dword ["+op2+op3+"]");
+		}*/
+		}else{
 			return ("pop dword ["+op2+op3+"]");
 		}
 		
-		return null;
+		//return null;
 	}
 	
 	
