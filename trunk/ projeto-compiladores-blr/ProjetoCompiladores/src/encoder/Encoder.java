@@ -304,8 +304,6 @@ public class Encoder implements Visitor{
 		}
 		
 		// Início do if
-		// TODO: Label para if e while não começa com _
-		// TODO: Tentar não gerar parte do else caso não exista.
 		emit(InstructionType.LABEL, label+"_if_"+labelCounter+"_begin", destiny);
 		openScope(destiny);
 		Operator op = ((BinaryExpression)ifCommand.getExpression()).getOperator();
@@ -434,7 +432,6 @@ public class Encoder implements Visitor{
 		if(obj instanceof FunctionDeclaration)
 			destiny = functionInstructions;
 		
-		// Tem que colocar a let pra eax e a right para ebx e gravar o resultado em eax pra colocar na pilha
 		// empilha resultado leftExpression (push eax)
 		binaryExpression.getLeftExpression().visit(this, obj);
 		//Salva resultado da leftExpression na pilha 
@@ -510,6 +507,9 @@ public class Encoder implements Visitor{
 		ArrayList<Expression> arguments = unaryExpressionFunction.getArguments(); 
 		int qntArguments = arguments.size();
 		
+		//emit(InstructionType.SUB, InstructionType.ESP, (qntArguments*OFFSET)+"", destiny);
+		
+		
 		Collections.reverse(arguments);
 		for (Expression e : arguments){
 			//EAX terá o resultado de cada expressão
@@ -531,12 +531,17 @@ public class Encoder implements Visitor{
 	@Override
 	public Object visitIdentifier(Identifier identifier, Object obj)
 			throws SemanticException {
+		ArrayList<Instruction> destiny = instructions;
+		if(obj instanceof FunctionDeclaration)
+			destiny = functionInstructions;
 		
 		relativeOffset--;
 		
 		IdentifierLocation il = new IdentifierLocation(this.level, relativeOffset*OFFSET);
 		
 		idMap.put(identifier.getSpelling(), il);
+		
+		emit(InstructionType.SUB, InstructionType.ESP, OFFSET+"", destiny);
 		
 		return null;
 	}
@@ -548,9 +553,6 @@ public class Encoder implements Visitor{
 
 	@Override
 	public Object visitOperator(Operator operator, Object obj) {
-
-		// pega o tipo da operação
-		int operatorKind = operator.getKind();
 				
 		/*
 		 *  considerando que os resultados das expressões já foram empilhados
@@ -561,24 +563,19 @@ public class Encoder implements Visitor{
 		if(obj instanceof FunctionDeclaration)
 			destiny = functionInstructions;
 		
-		switch (operatorKind) {
-			case GrammarSymbols.MINUS:
-				emit(InstructionType.SUB, InstructionType.EAX, InstructionType.EBX, destiny);
-				break;
-			case GrammarSymbols.PLUS:
-				emit(InstructionType.ADD, InstructionType.EAX, InstructionType.EBX, destiny);
-				break;
-			case GrammarSymbols.MULTIPLICATION:
-				emit(InstructionType.MULT, InstructionType.EAX, InstructionType.EBX, destiny);
-				break;
-			//TODO: Cuidado com a divisão!
-			case GrammarSymbols.DIVISION:
-				emit(InstructionType.DIV, InstructionType.EAX, InstructionType.EDX, destiny);
-				break;
-			case GrammarSymbols.RELATIONAL_OPERATOR:
-				emit(InstructionType.CMP, InstructionType.EAX, InstructionType.EBX, destiny);
-				break;
+		String op = operator.getSpelling();
+		if(op.equals("-"))
+			emit(InstructionType.SUB, InstructionType.EAX, InstructionType.EBX, destiny);
+		else if(op.equals("+"))
+			emit(InstructionType.ADD, InstructionType.EAX, InstructionType.EBX, destiny);
+		else if(op.equals("*"))
+			emit(InstructionType.MULT, InstructionType.EAX, InstructionType.EBX, destiny);
+		else if(op.equals("/")){
+			emit(InstructionType.MOV, InstructionType.EDX, "0", destiny);
+			emit(InstructionType.DIV, InstructionType.EBX, destiny);
 		}
+		else
+			emit(InstructionType.CMP, InstructionType.EAX, InstructionType.EBX, destiny);
 
 		return null;
 	}
@@ -646,21 +643,23 @@ public class Encoder implements Visitor{
 	private void reachIdentifier(IdentifierLocation il, ArrayList<Instruction> destiny){
 		
 		int diff = this.level - il.getLevel();
-		//Pegando o EBP antigo
-		emit(InstructionType.MOV, InstructionType.ECX, InstructionType.EBP, destiny);
-		
-		for(int i=0; i<diff; i++){	
-			emit(InstructionType.PUSH, InstructionType.PUSH_REG_VALUE+"", InstructionType.EBP, destiny);
-			emit(InstructionType.POP, InstructionType.POP_REG+"", InstructionType.EBP, destiny);
-
-			emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
-		}
-
-		//Restaura o EBP
-		emit(InstructionType.MOV, InstructionType.EBP, InstructionType.ECX, destiny);
-		
 		if(diff == 0){
 			emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
+		} else {
+		
+			//Pegando o EBP antigo
+			emit(InstructionType.MOV, InstructionType.ECX, InstructionType.EBP, destiny);
+			
+			for(int i=0; i<diff; i++){	
+				emit(InstructionType.PUSH, InstructionType.PUSH_REG_VALUE+"", InstructionType.EBP, destiny);
+				emit(InstructionType.POP, InstructionType.POP_REG+"", InstructionType.EBP, destiny);
+				emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
+			}
+	
+			//Restaura o EBP
+			emit(InstructionType.MOV, InstructionType.EBP, InstructionType.ECX, destiny);
 		}
 	}
 }
+
+

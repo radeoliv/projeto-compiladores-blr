@@ -50,5 +50,5 @@ public interface InstructionType {
 	public static final String ECX = "ecx";
 	public static final String EDX = "edx";
 	
-	public static final String BLOCK_SEPARATOR_STRING = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
+	public static final String BLOCK_SEPARATOR_STRING = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n";
 }
