@@ -137,6 +137,8 @@ public class Encoder implements Visitor{
 			program.visit(this, null);
 		}
 		closeScope(instructions);
+		emit(InstructionType.MOV, InstructionType.EAX, "0", instructions);
+		emit(InstructionType.RET, instructions);
 		emit(InstructionType.BLOCKS_SEPARATOR, instructions);
 		
 		return null;
@@ -653,8 +655,12 @@ public class Encoder implements Visitor{
 
 			emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
 		}
-		
+
 		//Restaura o EBP
 		emit(InstructionType.MOV, InstructionType.EBP, InstructionType.ECX, destiny);
+		
+		if(diff == 0){
+			emit(InstructionType.MOV, InstructionType.EDX, InstructionType.EBP, destiny);
+		}
 	}
 }
