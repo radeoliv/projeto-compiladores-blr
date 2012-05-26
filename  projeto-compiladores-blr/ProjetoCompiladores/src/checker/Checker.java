@@ -26,10 +26,6 @@ public class Checker implements Visitor{
 		identificationTable = new IdentificationTable();
 	}
 	
-	/*public void check(AST a) throws SemanticException{
-		a.visit(this, null);
-	}*/
-	
 	public AST check(AST a) throws SemanticException{
 		a.visit(this, null);
 		return a;

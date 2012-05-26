@@ -42,10 +42,6 @@ public interface InstructionType {
 	public static final String JLE = "jle";	//Jump if Less or Equal
 	public static final String JG = "jg";	//Jump if Greater
 	public static final String JL = "jl";	//Jump if Less
-		
-	//public static final String TIPO_INT = "dd";
-	//public static final String CONSTANTE = "const";
-	//public static final String DWORD = "dword";
 	
 	public static final String EBP = "ebp";
 	public static final String ESP = "esp";

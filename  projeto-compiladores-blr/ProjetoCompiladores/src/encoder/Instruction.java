@@ -81,37 +81,28 @@ public class Instruction {
 	
 
 	private String iPush(){
-		// TODO Tava retornando null no arquivo
-		// Adicionei os "" nas comparações, se não tivesse... retornava errado
 		if(op1.equals(InstructionType.PUSH_REG_OFFSET+"")){
 			return ("push dword ["+op2+op3+"]");
 		} else if(op1.equals(InstructionType.PUSH_CONSTANT+"")){
 			return ("push dword "+op2);
 		} else if(op1.equals(InstructionType.PUSH_REG_ADDRESS+"")){
 			return ("push "+op2);
-		/*} else if(op1.equals(InstructionType.PUSH_REG_VALUE+"")){
-			return ("push ["+op2+"]");
-		}*/
-		}else{
+		} else if(op1.equals(InstructionType.PUSH_REG_VALUE+"")){
 			return ("push ["+op2+"]");
 		}
-		//return null;
+
+		return null;
 
 	}
 	
 	private String iPop(){
-		// TODO Tava retornando null no arquivo
-		// Adicionei os "" nas comparações, se não tivesse... retornava errado
 		if(this.op1.equals(InstructionType.POP_REG+"")){
 			return ("pop "+op2);
-		/*} else if(this.op1.equals(InstructionType.POP_REG_OFFSET+"")){
-			return ("pop dword ["+op2+op3+"]");
-		}*/
-		}else{
+		} else if(this.op1.equals(InstructionType.POP_REG_OFFSET+"")){
 			return ("pop dword ["+op2+op3+"]");
 		}
 		
-		//return null;
+		return null;
 	}
 	
 	
