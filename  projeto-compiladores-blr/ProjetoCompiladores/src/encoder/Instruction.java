@@ -27,9 +27,9 @@ public class Instruction {
 				
 			case InstructionType.LABEL:
 				if(this.op1.equals(InstructionType.WINMAIN)){
-					return(InstructionType.WINMAIN+":");
+					return(InstructionType.WINMAIN+":"+"\n");
 				}else{
-					return ("_"+this.op1+":");
+					return ("_"+this.op1+":"+"\n");
 				}
 				
 			case InstructionType.CALL_FUNCTION:
@@ -51,10 +51,10 @@ public class Instruction {
 				return ("ret");
 				
 			case InstructionType.JMP:
-				return ("jmp "+this.op1);
+				return ("jmp _"+this.op1);
 				
 			case InstructionType.CONDITIONAL_JUMP:
-				return (this.op1+" "+this.op2);
+				return (this.op1+" _"+this.op2);
 				
 			case InstructionType.ADD:
 				return ("add "+this.op1+", "+this.op2);
@@ -66,8 +66,8 @@ public class Instruction {
 				return ("imul "+this.op1+", "+this.op2);
 				
 			case InstructionType.DIV:
-				return ("idiv "+this.op1+", "+this.op2);				
-			
+				//return ("idiv "+this.op1+", "+this.op2);			
+				return ("idiv "+this.op1);
 			case InstructionType.INT_FORMAT:
 				return ("intFormat: db \"%d\", 10, 0");
 				
@@ -82,13 +82,16 @@ public class Instruction {
 
 	private String iPush(){
 		if(op1.equals(InstructionType.PUSH_REG_OFFSET+"")){
-			return ("push dword ["+op2+op3+"]");
+			if(op3.charAt(0) == '-')
+				return ("push dword ["+op2+op3+"]");
+			else
+				return ("push dword ["+op2+"+"+op3+"]");
 		} else if(op1.equals(InstructionType.PUSH_CONSTANT+"")){
 			return ("push dword "+op2);
 		} else if(op1.equals(InstructionType.PUSH_REG_ADDRESS+"")){
 			return ("push "+op2);
 		} else if(op1.equals(InstructionType.PUSH_REG_VALUE+"")){
-			return ("push ["+op2+"]");
+			return ("push dword ["+op2+"]");
 		}
 
 		return null;
